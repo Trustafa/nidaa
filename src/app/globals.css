@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/*
+  Nidaa design tokens — source of truth (see DESIGN.md for intent).
+  Neutral base is true/cool-neutral; warmth lives in the brand mauve + gold only.
+  All colors OKLCH.
+*/
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg: oklch(1 0 0);
+  --surface: oklch(0.985 0.002 15);
+  --sidebar: oklch(0.977 0.004 15);
+
+  /* Ink */
+  --ink: oklch(0.24 0.01 15);
+  --ink-muted: oklch(0.45 0.015 15);
+  --ink-faint: oklch(0.52 0.012 15);
+
+  /* Lines */
+  --line: oklch(0.905 0.006 15);
+  --line-strong: oklch(0.84 0.01 15);
+
+  /* Brand — dusty rose / mauve from the wordmark */
+  --brand-050: oklch(0.965 0.012 15);
+  --brand-100: oklch(0.93 0.025 15);
+  --brand-300: oklch(0.72 0.06 15);
+  --brand-500: oklch(0.58 0.075 15);
+  --brand-600: oklch(0.48 0.075 15);
+  --brand-700: oklch(0.42 0.07 15);
+
+  /* Gold — the envelope seal; tiny doses only */
+  --gold: oklch(0.62 0.09 80);
+
+  /* RSVP status — always paired with a label, never color alone */
+  --attending-ink: oklch(0.42 0.1 150);
+  --attending-bg: oklch(0.962 0.025 150);
+  --attending-dot: oklch(0.62 0.14 150);
+
+  --declined-ink: oklch(0.45 0.12 25);
+  --declined-bg: oklch(0.962 0.015 25);
+  --declined-dot: oklch(0.58 0.15 25);
+
+  --maybe-ink: oklch(0.46 0.1 80);
+  --maybe-bg: oklch(0.968 0.035 90);
+  --maybe-dot: oklch(0.72 0.13 85);
+
+  --pending-ink: oklch(0.45 0.01 15);
+  --pending-bg: oklch(0.955 0.002 15);
+  --pending-dot: oklch(0.68 0.01 15);
+
+  --invalid-ink: oklch(0.47 0.12 50);
+  --invalid-bg: oklch(0.963 0.03 60);
+  --invalid-dot: oklch(0.63 0.14 55);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-sidebar: var(--sidebar);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-brand-050: var(--brand-050);
+  --color-brand-100: var(--brand-100);
+  --color-brand-300: var(--brand-300);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+
+  --color-gold: var(--gold);
+
+  --color-attending-ink: var(--attending-ink);
+  --color-attending-bg: var(--attending-bg);
+  --color-attending-dot: var(--attending-dot);
+  --color-declined-ink: var(--declined-ink);
+  --color-declined-bg: var(--declined-bg);
+  --color-declined-dot: var(--declined-dot);
+  --color-maybe-ink: var(--maybe-ink);
+  --color-maybe-bg: var(--maybe-bg);
+  --color-maybe-dot: var(--maybe-dot);
+  --color-pending-ink: var(--pending-ink);
+  --color-pending-bg: var(--pending-bg);
+  --color-pending-dot: var(--pending-dot);
+  --color-invalid-ink: var(--invalid-ink);
+  --color-invalid-bg: var(--invalid-bg);
+  --color-invalid-dot: var(--invalid-dot);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-script: var(--font-script);
+
+  /* Semantic z-index scale */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-drawer-backdrop: 300;
+  --z-drawer: 310;
+  --z-modal-backdrop: 400;
+  --z-modal: 410;
+  --z-toast: 500;
+  --z-tooltip: 600;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Counts and dates align vertically everywhere */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
