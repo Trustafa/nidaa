@@ -1,0 +1,814 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01T08:34:14+00:00",
+  "title": "Design System: Nidaa",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.15 0.007 262)",
+          "oklch(0.27 0.007 262)",
+          "oklch(0.39 0.01 262)",
+          "oklch(0.51 0.01 262)",
+          "oklch(0.63 0.01 262)",
+          "oklch(0.75 0.01 262)",
+          "oklch(0.86 0.006 262)",
+          "oklch(0.95 0.006 262)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Page Edge",
+        "canonical": "oklch(0.975 0.008 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.021 250)",
+          "oklch(0.27 0.021 250)",
+          "oklch(0.39 0.03 250)",
+          "oklch(0.51 0.03 250)",
+          "oklch(0.63 0.03 250)",
+          "oklch(0.75 0.03 250)",
+          "oklch(0.86 0.017 250)",
+          "oklch(0.95 0.017 250)"
+        ]
+      },
+      "cover": {
+        "role": "secondary",
+        "displayName": "Exercise-Book Cover",
+        "canonical": "oklch(0.45 0.13 257)",
+        "tonalRamp": [
+          "oklch(0.15 0.091 257)",
+          "oklch(0.27 0.091 257)",
+          "oklch(0.39 0.13 257)",
+          "oklch(0.51 0.13 257)",
+          "oklch(0.63 0.13 257)",
+          "oklch(0.75 0.13 257)",
+          "oklch(0.86 0.072 257)",
+          "oklch(0.95 0.072 257)"
+        ]
+      },
+      "cover-deep": {
+        "role": "secondary",
+        "displayName": "Cover Fold",
+        "canonical": "oklch(0.39 0.12 258)",
+        "tonalRamp": [
+          "oklch(0.15 0.084 258)",
+          "oklch(0.27 0.084 258)",
+          "oklch(0.39 0.12 258)",
+          "oklch(0.51 0.12 258)",
+          "oklch(0.63 0.12 258)",
+          "oklch(0.75 0.12 258)",
+          "oklch(0.86 0.066 258)",
+          "oklch(0.95 0.066 258)"
+        ]
+      },
+      "cover-ink": {
+        "role": "secondary",
+        "displayName": "Cover Ink",
+        "canonical": "oklch(0.98 0.01 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.025 262)",
+          "oklch(0.27 0.025 262)",
+          "oklch(0.39 0.035 262)",
+          "oklch(0.51 0.035 262)",
+          "oklch(0.63 0.035 262)",
+          "oklch(0.75 0.035 262)",
+          "oklch(0.86 0.019 262)",
+          "oklch(0.95 0.019 262)"
+        ]
+      },
+      "cover-ink-muted": {
+        "role": "secondary",
+        "displayName": "Cover Ink Muted",
+        "canonical": "oklch(0.9 0.035 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.025 262)",
+          "oklch(0.27 0.025 262)",
+          "oklch(0.39 0.035 262)",
+          "oklch(0.51 0.035 262)",
+          "oklch(0.63 0.035 262)",
+          "oklch(0.75 0.035 262)",
+          "oklch(0.86 0.019 262)",
+          "oklch(0.95 0.019 262)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Blue-Black Ink",
+        "canonical": "oklch(0.22 0.02 262)",
+        "tonalRamp": [
+          "oklch(0.22 0.02 262)",
+          "oklch(0.44 0.02 262)",
+          "oklch(0.53 0.018 262)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "oklch(0.44 0.02 262)",
+        "tonalRamp": [
+          "oklch(0.22 0.02 262)",
+          "oklch(0.44 0.02 262)",
+          "oklch(0.53 0.018 262)"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Ink Faint",
+        "canonical": "oklch(0.53 0.018 262)",
+        "tonalRamp": [
+          "oklch(0.22 0.02 262)",
+          "oklch(0.44 0.02 262)",
+          "oklch(0.53 0.018 262)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Printed Rule",
+        "canonical": "oklch(0.89 0.03 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.032 250)",
+          "oklch(0.27 0.032 250)",
+          "oklch(0.39 0.045 250)",
+          "oklch(0.51 0.045 250)",
+          "oklch(0.63 0.045 250)",
+          "oklch(0.75 0.045 250)",
+          "oklch(0.86 0.025 250)",
+          "oklch(0.95 0.025 250)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Printed Rule Strong",
+        "canonical": "oklch(0.8 0.045 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.032 250)",
+          "oklch(0.27 0.032 250)",
+          "oklch(0.39 0.045 250)",
+          "oklch(0.51 0.045 250)",
+          "oklch(0.63 0.045 250)",
+          "oklch(0.75 0.045 250)",
+          "oklch(0.86 0.025 250)",
+          "oklch(0.95 0.025 250)"
+        ]
+      },
+      "control": {
+        "role": "Borders of inputs, the search field and secondary buttons; 3.3:1 on white.",
+        "displayName": "Control Outline",
+        "canonical": "oklch(0.64 0.05 255)",
+        "tonalRamp": [
+          "oklch(0.15 0.032 250)",
+          "oklch(0.27 0.032 250)",
+          "oklch(0.39 0.045 250)",
+          "oklch(0.51 0.045 250)",
+          "oklch(0.63 0.045 250)",
+          "oklch(0.75 0.045 250)",
+          "oklch(0.86 0.025 250)",
+          "oklch(0.95 0.025 250)"
+        ]
+      },
+      "margin": {
+        "role": "tertiary",
+        "displayName": "Margin Red",
+        "canonical": "oklch(0.72 0.12 22)",
+        "tonalRamp": [
+          "oklch(0.15 0.084 22)",
+          "oklch(0.27 0.084 22)",
+          "oklch(0.39 0.12 22)",
+          "oklch(0.51 0.12 22)",
+          "oklch(0.63 0.12 22)",
+          "oklch(0.75 0.12 22)",
+          "oklch(0.86 0.066 22)",
+          "oklch(0.95 0.066 22)"
+        ]
+      },
+      "brand-050": {
+        "role": "primary",
+        "displayName": "Ballpoint Wash",
+        "canonical": "oklch(0.965 0.02 265)",
+        "tonalRamp": [
+          "oklch(0.37 0.17 265)",
+          "oklch(0.43 0.18 265)",
+          "oklch(0.5 0.17 265)",
+          "oklch(0.72 0.11 265)",
+          "oklch(0.93 0.04 265)",
+          "oklch(0.965 0.02 265)"
+        ]
+      },
+      "brand-100": {
+        "role": "primary",
+        "displayName": "Ballpoint Halo",
+        "canonical": "oklch(0.93 0.04 265)",
+        "tonalRamp": [
+          "oklch(0.37 0.17 265)",
+          "oklch(0.43 0.18 265)",
+          "oklch(0.5 0.17 265)",
+          "oklch(0.72 0.11 265)",
+          "oklch(0.93 0.04 265)",
+          "oklch(0.965 0.02 265)"
+        ]
+      },
+      "brand-300": {
+        "role": "primary",
+        "displayName": "Ballpoint Light",
+        "canonical": "oklch(0.72 0.11 265)",
+        "tonalRamp": [
+          "oklch(0.37 0.17 265)",
+          "oklch(0.43 0.18 265)",
+          "oklch(0.5 0.17 265)",
+          "oklch(0.72 0.11 265)",
+          "oklch(0.93 0.04 265)",
+          "oklch(0.965 0.02 265)"
+        ]
+      },
+      "brand-500": {
+        "role": "primary",
+        "displayName": "Ballpoint Focus",
+        "canonical": "oklch(0.5 0.17 265)",
+        "tonalRamp": [
+          "oklch(0.37 0.17 265)",
+          "oklch(0.43 0.18 265)",
+          "oklch(0.5 0.17 265)",
+          "oklch(0.72 0.11 265)",
+          "oklch(0.93 0.04 265)",
+          "oklch(0.965 0.02 265)"
+        ]
+      },
+      "brand-600": {
+        "role": "primary",
+        "displayName": "Ballpoint Blue",
+        "canonical": "oklch(0.43 0.18 265)",
+        "tonalRamp": [
+          "oklch(0.37 0.17 265)",
+          "oklch(0.43 0.18 265)",
+          "oklch(0.5 0.17 265)",
+          "oklch(0.72 0.11 265)",
+          "oklch(0.93 0.04 265)",
+          "oklch(0.965 0.02 265)"
+        ]
+      },
+      "brand-700": {
+        "role": "primary",
+        "displayName": "Ballpoint Pressed",
+        "canonical": "oklch(0.37 0.17 265)",
+        "tonalRamp": [
+          "oklch(0.37 0.17 265)",
+          "oklch(0.43 0.18 265)",
+          "oklch(0.5 0.17 265)",
+          "oklch(0.72 0.11 265)",
+          "oklch(0.93 0.04 265)",
+          "oklch(0.965 0.02 265)"
+        ]
+      },
+      "rose": {
+        "role": "tertiary",
+        "displayName": "Wordmark Rose",
+        "canonical": "oklch(0.87 0.07 5)",
+        "tonalRamp": [
+          "oklch(0.15 0.049 5)",
+          "oklch(0.27 0.049 5)",
+          "oklch(0.39 0.07 5)",
+          "oklch(0.51 0.07 5)",
+          "oklch(0.63 0.07 5)",
+          "oklch(0.75 0.07 5)",
+          "oklch(0.86 0.039 5)",
+          "oklch(0.95 0.039 5)"
+        ]
+      },
+      "gold": {
+        "role": "tertiary",
+        "displayName": "Tag Gold",
+        "canonical": "oklch(0.86 0.1 85)",
+        "tonalRamp": [
+          "oklch(0.15 0.07 85)",
+          "oklch(0.27 0.07 85)",
+          "oklch(0.39 0.1 85)",
+          "oklch(0.51 0.1 85)",
+          "oklch(0.63 0.1 85)",
+          "oklch(0.75 0.1 85)",
+          "oklch(0.86 0.055 85)",
+          "oklch(0.95 0.055 85)"
+        ]
+      },
+      "attending-ink": {
+        "role": "status",
+        "displayName": "Coming Green",
+        "canonical": "oklch(0.45 0.12 150)",
+        "tonalRamp": [
+          "oklch(0.15 0.084 150)",
+          "oklch(0.27 0.084 150)",
+          "oklch(0.39 0.12 150)",
+          "oklch(0.51 0.12 150)",
+          "oklch(0.63 0.12 150)",
+          "oklch(0.75 0.12 150)",
+          "oklch(0.86 0.066 150)",
+          "oklch(0.95 0.066 150)"
+        ]
+      },
+      "declined-ink": {
+        "role": "status",
+        "displayName": "Can't-Make-It Red",
+        "canonical": "oklch(0.48 0.15 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.105 25)",
+          "oklch(0.27 0.105 25)",
+          "oklch(0.39 0.15 25)",
+          "oklch(0.51 0.15 25)",
+          "oklch(0.63 0.15 25)",
+          "oklch(0.75 0.15 25)",
+          "oklch(0.86 0.083 25)",
+          "oklch(0.95 0.083 25)"
+        ]
+      },
+      "declined-bg": {
+        "role": "status",
+        "displayName": "Can't-Make-It Wash",
+        "canonical": "oklch(0.965 0.02 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.105 25)",
+          "oklch(0.27 0.105 25)",
+          "oklch(0.39 0.15 25)",
+          "oklch(0.51 0.15 25)",
+          "oklch(0.63 0.15 25)",
+          "oklch(0.75 0.15 25)",
+          "oklch(0.86 0.083 25)",
+          "oklch(0.95 0.083 25)"
+        ]
+      },
+      "declined-dot": {
+        "role": "status",
+        "displayName": "Can't-Make-It Stroke",
+        "canonical": "oklch(0.56 0.17 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.105 25)",
+          "oklch(0.27 0.105 25)",
+          "oklch(0.39 0.15 25)",
+          "oklch(0.51 0.15 25)",
+          "oklch(0.63 0.15 25)",
+          "oklch(0.75 0.15 25)",
+          "oklch(0.86 0.083 25)",
+          "oklch(0.95 0.083 25)"
+        ]
+      },
+      "maybe-ink": {
+        "role": "status",
+        "displayName": "Maybe Amber",
+        "canonical": "oklch(0.5 0.11 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.077 70)",
+          "oklch(0.27 0.077 70)",
+          "oklch(0.39 0.11 70)",
+          "oklch(0.51 0.11 70)",
+          "oklch(0.63 0.11 70)",
+          "oklch(0.75 0.11 70)",
+          "oklch(0.86 0.061 70)",
+          "oklch(0.95 0.061 70)"
+        ]
+      },
+      "maybe-bg": {
+        "role": "status",
+        "displayName": "Practice Wash",
+        "canonical": "oklch(0.97 0.04 90)",
+        "tonalRamp": [
+          "oklch(0.15 0.07 90)",
+          "oklch(0.27 0.07 90)",
+          "oklch(0.39 0.1 90)",
+          "oklch(0.51 0.1 90)",
+          "oklch(0.63 0.1 90)",
+          "oklch(0.75 0.1 90)",
+          "oklch(0.86 0.055 90)",
+          "oklch(0.95 0.055 90)"
+        ]
+      },
+      "pending-ink": {
+        "role": "status",
+        "displayName": "No-Reply Grey",
+        "canonical": "oklch(0.5 0.02 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.014 262)",
+          "oklch(0.27 0.014 262)",
+          "oklch(0.39 0.02 262)",
+          "oklch(0.51 0.02 262)",
+          "oklch(0.63 0.02 262)",
+          "oklch(0.75 0.02 262)",
+          "oklch(0.86 0.011 262)",
+          "oklch(0.95 0.011 262)"
+        ]
+      },
+      "invalid-ink": {
+        "role": "status",
+        "displayName": "Unclear Rust",
+        "canonical": "oklch(0.5 0.14 45)",
+        "tonalRamp": [
+          "oklch(0.15 0.098 45)",
+          "oklch(0.27 0.098 45)",
+          "oklch(0.39 0.14 45)",
+          "oklch(0.51 0.14 45)",
+          "oklch(0.63 0.14 45)",
+          "oklch(0.75 0.14 45)",
+          "oklch(0.86 0.077 45)",
+          "oklch(0.95 0.077 45)"
+        ]
+      },
+      "chat-surface": {
+        "role": "neutral",
+        "displayName": "Chat Paper",
+        "canonical": "oklch(0.95 0.015 90)",
+        "tonalRamp": [
+          "oklch(0.15 0.01 90)",
+          "oklch(0.27 0.01 90)",
+          "oklch(0.39 0.015 90)",
+          "oklch(0.51 0.015 90)",
+          "oklch(0.63 0.015 90)",
+          "oklch(0.75 0.015 90)",
+          "oklch(0.86 0.008 90)",
+          "oklch(0.95 0.008 90)"
+        ]
+      },
+      "wa-sent": {
+        "role": "neutral",
+        "displayName": "WhatsApp Sent",
+        "canonical": "oklch(0.94 0.06 145)"
+      },
+      "wa-button": {
+        "role": "neutral",
+        "displayName": "WhatsApp Button",
+        "canonical": "oklch(0.5 0.09 200)"
+      },
+      "highlight": {
+        "role": "neutral",
+        "displayName": "Highlighter",
+        "canonical": "oklch(0.9 0.08 95)"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The one page heading: Home greeting, event name."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings sitting on a 1px ink rule."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Event names in entries, drawer guest name, dialog titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Working size for rows, tallies, buttons and inputs."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, status words, small actions."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Phone numbers under names, table heads, practice banner."
+      },
+      "hand-total": {
+        "displayName": "Hand Total",
+        "purpose": "Kalam ballpoint seat counts with a drawn double underline."
+      },
+      "hand-note": {
+        "displayName": "Hand Note",
+        "purpose": "Kalam margin countdowns, party sizes, quoted unclear replies."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "Great Vibes, the word Nidaa only."
+      },
+      "wordmark-tag": {
+        "displayName": "Wordmark Tag",
+        "purpose": "Gold 'RSVP Service' tag under the sidebar wordmark only; not a general label style."
+      }
+    },
+    "shadows": [
+      {
+        "name": "pen-press",
+        "value": "0 1px 2px oklch(0.3 0.1 265 / 0.25)",
+        "purpose": "Primary button only."
+      },
+      {
+        "name": "toast-lift",
+        "value": "0 6px 18px -6px oklch(0.25 0.08 262 / 0.35)",
+        "purpose": "Toasts."
+      },
+      {
+        "name": "drawer-edge",
+        "value": "-12px 0 32px -12px oklch(0.25 0.08 262 / 0.35)",
+        "purpose": "Guest drawer leading edge."
+      },
+      {
+        "name": "dialog-lift",
+        "value": "0 24px 48px -16px oklch(0.25 0.08 262 / 0.45)",
+        "purpose": "Modal dialogs."
+      },
+      {
+        "name": "chat-bubble",
+        "value": "0 1px 1px oklch(0.3 0.03 150 / 0.15)",
+        "purpose": "WhatsApp bubbles in the drawer thread."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ink-draw",
+        "value": "520ms cubic-bezier(0.32, 0.72, 0, 1), 160ms stagger per stroke",
+        "purpose": "A margin mark drawing itself when a status changes after mount (stroke-dashoffset)."
+      },
+      {
+        "name": "drawer-in",
+        "value": "220ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Guest drawer slides in from the right."
+      },
+      {
+        "name": "modal-in",
+        "value": "180ms cubic-bezier(0.22, 1, 0.36, 1), rise 8px",
+        "purpose": "Dialog entrance."
+      },
+      {
+        "name": "toast-in",
+        "value": "240ms cubic-bezier(0.22, 1, 0.36, 1), rise 8px",
+        "purpose": "Toast entrance."
+      },
+      {
+        "name": "fade-in",
+        "value": "150ms ease-out",
+        "purpose": "Scrim behind the drawer."
+      },
+      {
+        "name": "state-change",
+        "value": "150ms (colors), 200ms (arrow nudge 4px)",
+        "purpose": "Hover/press transitions on controls and entries."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce -> all animation/transition durations 0.01ms",
+        "purpose": "Global accessibility override."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px",
+        "purpose": "Guest table replaces one-line phone list; entry padding grows."
+      },
+      {
+        "name": "md",
+        "value": "768px",
+        "purpose": "Cover sidebar replaces phone top bar + bottom tab bar; gutters 20px -> 48px."
+      },
+      {
+        "name": "lg",
+        "value": "1024px",
+        "purpose": "Filters and search share a row; form gains its preview column."
+      },
+      {
+        "name": "xl",
+        "value": "1280px",
+        "purpose": "Home gains its 19rem calendar / notes column."
+      }
+    ],
+    "zIndex": [
+      {
+        "name": "dropdown",
+        "value": "100"
+      },
+      {
+        "name": "sticky",
+        "value": "200"
+      },
+      {
+        "name": "drawer-backdrop",
+        "value": "300"
+      },
+      {
+        "name": "drawer",
+        "value": "310"
+      },
+      {
+        "name": "modal-backdrop",
+        "value": "400"
+      },
+      {
+        "name": "modal",
+        "value": "410"
+      },
+      {
+        "name": "toast",
+        "value": "500"
+      },
+      {
+        "name": "tooltip",
+        "value": "600"
+      }
+    ],
+    "rules": [
+      {
+        "name": "heading-rule",
+        "value": "1px solid oklch(0.22 0.02 262 / 0.8)",
+        "purpose": "Under section headings, above lists and table heads, drawer header base."
+      },
+      {
+        "name": "row-hairline",
+        "value": "1px solid var(--line)",
+        "purpose": "Between rows."
+      },
+      {
+        "name": "foot-rule",
+        "value": "2px solid oklch(0.22 0.02 262 / 0.8)",
+        "purpose": "Above a hand-summed total."
+      },
+      {
+        "name": "margin-rule",
+        "value": "1px var(--margin) at --margin-x (default 2.25rem)",
+        "purpose": ".ruled-margin vertical line down every list."
+      },
+      {
+        "name": "practice-rule",
+        "value": "1px dashed var(--line-strong)",
+        "purpose": "Top of the practice-reply strip."
+      }
+    ],
+    "browserSurfaces": [
+      {
+        "name": "selection",
+        "value": "background oklch(0.9 0.08 95); color var(--ink)",
+        "purpose": "Highlighter-yellow text selection."
+      },
+      {
+        "name": "caret",
+        "value": "var(--brand-600)",
+        "purpose": "Ballpoint caret."
+      },
+      {
+        "name": "focus-visible",
+        "value": "2px solid var(--brand-500), offset 2px",
+        "purpose": "Global keyboard focus."
+      },
+      {
+        "name": "scrollbar",
+        "value": "thin, var(--line-strong) on transparent",
+        "purpose": "Ruled-line scrollbars."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ballpoint-filled action; one per region (New event, Send invitations, Save).",
+      "html": "<button class=\"ds-btn-primary\">Send invitations</button>",
+      "css": ".ds-btn-primary { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px; border-radius: 5px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: background-color 150ms, color 150ms, border-color 150ms, transform 150ms; border: 0; background: var(--brand-600); color: #fff; box-shadow: 0 1px 2px oklch(0.3 0.1 265 / 0.25); } .ds-btn-primary:hover { background: var(--brand-700); } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White, ruled border; edit, cancel, import, remind.",
+      "html": "<button class=\"ds-btn-secondary\">Edit details</button>",
+      "css": ".ds-btn-secondary { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px; border-radius: 5px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: background-color 150ms, color 150ms, border-color 150ms, transform 150ms; background: var(--bg); color: var(--ink); border: 1px solid var(--control); } .ds-btn-secondary:hover { border-color: var(--brand-300); color: var(--brand-700); } .ds-btn-secondary:active { transform: translateY(1px); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Unfilled destructive action; washes red on hover.",
+      "html": "<button class=\"ds-btn-danger\">Remove</button>",
+      "css": ".ds-btn-danger { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px; border-radius: 5px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: background-color 150ms, color 150ms, border-color 150ms, transform 150ms; padding: 8px 14px; background: transparent; border: 0; color: var(--declined-ink); } .ds-btn-danger:hover { background: var(--declined-bg); } .ds-btn-danger:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label above, ruled border, ballpoint focus ring.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">WhatsApp number</span><input class=\"ds-input\" placeholder=\"+971 50 123 4567\"><span class=\"ds-field-hint\">Include the country code.</span></label>",
+      "css": ".ds-field { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: block; max-width: 320px; } .ds-field-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--ink); } .ds-input { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: block; width: 100%; margin-top: 6px; padding: 8px 12px; font-size: 0.9375rem; color: var(--ink); background: var(--bg); border: 1px solid var(--control); border-radius: 5px; font-variant-numeric: tabular-nums; transition: border-color 150ms, box-shadow 150ms; } .ds-input::placeholder { color: var(--ink-faint); } .ds-input:focus { outline: none; border-color: var(--brand-500); box-shadow: 0 0 0 2px var(--brand-100); } .ds-input[aria-invalid=true] { border-color: var(--declined-dot); } .ds-field-hint { display: block; margin-top: 6px; font-size: 0.75rem; color: var(--ink-muted); }"
+    },
+    {
+      "name": "Cover Sidebar",
+      "kind": "nav",
+      "refersTo": "sidebar",
+      "description": "Exercise-book cover shell with the rose wordmark, gold tag, and the current page as a white index tab.",
+      "html": "<aside class=\"ds-cover\"><div class=\"ds-wordmark\">Nidaa<span>RSVP Service</span></div><nav><a class=\"ds-nav ds-nav-current\" href=\"#\">Home</a><a class=\"ds-nav\" href=\"#\">Events</a><a class=\"ds-nav\" href=\"#\">Guests</a><a class=\"ds-nav\" href=\"#\">Settings</a></nav></aside>",
+      "css": ".ds-cover { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; width: 240px; padding: 32px 0 24px 16px; background: var(--cover); color: var(--cover-ink); } .ds-wordmark { font-family: var(--font-script), \"Great Vibes\", cursive; font-size: 2.75rem; line-height: 1; color: var(--rose); padding: 0 8px 32px; } .ds-wordmark span { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: block; margin-top: 4px; padding-left: 4px; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); } .ds-cover nav { display: flex; flex-direction: column; gap: 4px; } .ds-nav { display: block; margin-right: 16px; padding: 10px 16px 10px 12px; border-radius: 5px; font-size: 0.9375rem; font-weight: 500; color: var(--cover-ink-muted); text-decoration: none; transition: background-color 150ms, color 150ms; } .ds-nav:hover { background: var(--cover-deep); color: var(--cover-ink); } .ds-nav-current, .ds-nav-current:hover { margin-right: 0; border-radius: 5px 0 0 5px; background: var(--bg); color: var(--ink); font-weight: 600; } .ds-nav:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }"
+    },
+    {
+      "name": "Phone Tab Bar",
+      "kind": "nav",
+      "refersTo": "phone-tab-bar",
+      "description": "Fixed cover-blue bottom navigation on phones; rose stroke under the current tab.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-tab-current\" href=\"#\">Home<i></i></a><a class=\"ds-tab\" href=\"#\">Events<i></i></a><a class=\"ds-tab\" href=\"#\">Guests<i></i></a><a class=\"ds-tab\" href=\"#\">Settings<i></i></a></nav>",
+      "css": ".ds-tabs { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: grid; grid-template-columns: repeat(4, 1fr); max-width: 375px; background: var(--cover); border-top: 1px solid var(--cover-deep); } .ds-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0 8px; font-size: 0.75rem; font-weight: 600; color: var(--cover-ink-muted); text-decoration: none; transition: color 150ms; } .ds-tab i { display: block; width: 24px; height: 2px; border-radius: 999px; background: transparent; } .ds-tab-current { color: var(--cover-ink); } .ds-tab-current i { background: var(--rose); } .ds-tab:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }"
+    },
+    {
+      "name": "Status Word",
+      "kind": "chip",
+      "refersTo": "status-word",
+      "description": "Reply state as ballpoint mark plus a coloured word; never a pill.",
+      "html": "<div class=\"ds-status-row\"><span class=\"ds-status ds-coming\"><svg class=\"ds-mark\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path class=\"ds-stroke\" style=\"--len:28\" d=\"M3.2 10.6c1.6 1.4 3 3.2 4.4 5.2 2.3-4.6 5.4-8.8 9.4-12.3\"/></svg>Coming</span><span class=\"ds-status ds-cant\"><svg class=\"ds-mark\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4.4 4.6c3.6 3.6 7.4 7.4 11 11.2\"/><path d=\"M15.6 4.2c-3.8 3.8-7.6 7.7-11.3 11.9\"/></svg>Can't make it</span><span class=\"ds-status ds-maybe\"><svg class=\"ds-mark\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6.4 7c0-2.6 2-3.8 4-3.6 2.4.3 3.6 2.6 2.4 4.6-.9 1.4-2.8 2-2.9 4.6\"/><path d=\"M9.9 16.3l.1.2\"/></svg>Maybe</span><span class=\"ds-status ds-pending\">No reply yet</span><span class=\"ds-status ds-unclear\"><svg class=\"ds-mark\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.4 3.4c-.3 3.2-.2 6.3-.5 9.4\"/><path d=\"M9.8 16.3l.1.2\"/></svg>Unclear reply</span></div>",
+      "css": ".ds-status-row { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: flex; flex-wrap: wrap; gap: 16px; } .ds-status { display: inline-flex; align-items: center; gap: 4px; font-size: 0.875rem; font-weight: 600; white-space: nowrap; } .ds-mark { width: 16px; height: 16px; color: var(--brand-600); flex-shrink: 0; } .ds-coming { color: var(--attending-ink); } .ds-cant { color: var(--declined-ink); } .ds-maybe { color: var(--maybe-ink); } .ds-pending { color: var(--pending-ink); } .ds-unclear { color: var(--invalid-ink); }"
+    },
+    {
+      "name": "Hand Total",
+      "kind": "custom",
+      "refersTo": "hand-total",
+      "description": "Seat count summed in ballpoint at the foot of a ruled list, underlined twice.",
+      "html": "<div class=\"ds-foot\"><span class=\"ds-foot-label\">Seats to set</span><span class=\"ds-total\">116<svg viewBox=\"0 0 100 12\" preserveAspectRatio=\"none\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M2 3.5c22-1.4 52-1.6 96-.4\" vector-effect=\"non-scaling-stroke\"/><path d=\"M5 9c24-1.2 54-1.1 92 .3\" vector-effect=\"non-scaling-stroke\"/></svg></span></div>",
+      "css": ".ds-foot { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; max-width: 420px; padding: 12px 0 14px; border-top: 2px solid oklch(0.22 0.02 262 / 0.8); color: var(--ink); } .ds-foot-label { font-size: 0.9375rem; font-weight: 600; } .ds-total { font-family: var(--font-kalam), \"Kalam\", cursive; position: relative; display: inline-block; padding: 0 4px; font-size: 2.25rem; font-weight: 700; line-height: 1; color: var(--brand-600); font-variant-numeric: tabular-nums; } .ds-total svg { position: absolute; left: 0; right: 0; bottom: -10px; width: 100%; height: 12px; }"
+    },
+    {
+      "name": "Ruled Guest List",
+      "kind": "custom",
+      "refersTo": "guest-row",
+      "description": "Guest rows down a red margin: pen mark left of the line, name and phone right, status word at the end.",
+      "html": "<ul class=\"ds-list\"><li class=\"ds-row\"><span class=\"ds-m\"><svg class=\"ds-mark\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path class=\"ds-stroke\" style=\"--len:28\" d=\"M3.2 10.6c1.6 1.4 3 3.2 4.4 5.2 2.3-4.6 5.4-8.8 9.4-12.3\"/></svg></span><span class=\"ds-who\"><b>Reem Khan</b><small>+971 50 116 7610</small></span><span class=\"ds-word ds-coming\">Coming</span></li><li class=\"ds-row\"><span class=\"ds-m\"><svg class=\"ds-mark\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.4 3.4c-.3 3.2-.2 6.3-.5 9.4\"/><path d=\"M9.8 16.3l.1.2\"/></svg></span><span class=\"ds-who\"><b>Zayd Fernandes</b><small>+44 7700 914545 <em>“Who is this?”</em></small></span><span class=\"ds-word ds-unclear\">Unclear reply</span></li><li class=\"ds-row\"><span class=\"ds-m\"></span><span class=\"ds-who\"><b>Ibrahim Al Zaabi</b><small>+971 50 116 9608</small></span><span class=\"ds-word ds-pending\">No reply yet</span></li></ul>",
+      "css": ".ds-list { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; --mx: 48px; position: relative; list-style: none; margin: 0; padding: 0; max-width: 520px; border-top: 1px solid oklch(0.22 0.02 262 / 0.8); color: var(--ink); } .ds-list::before { content: ''; position: absolute; top: 0; bottom: 0; left: var(--mx); width: 1px; background: var(--margin); } .ds-row { display: grid; grid-template-columns: var(--mx) 1fr auto; align-items: center; padding: 12px 4px 12px 0; border-bottom: 1px solid var(--line); transition: background-color 150ms; } .ds-row:hover { background: var(--surface); } .ds-m { display: flex; justify-content: flex-end; padding-right: 8px; } .ds-m .ds-mark { width: 24px; height: 24px; color: var(--brand-600); } .ds-who { padding-left: 24px; min-width: 0; } .ds-who b { display: block; font-size: 0.9375rem; font-weight: 600; } .ds-who small { display: block; font-size: 0.8125rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; } .ds-who em { font-family: var(--font-kalam), \"Kalam\", cursive; font-style: normal; font-size: 0.9375rem; color: var(--brand-600); margin-left: 8px; } .ds-word { font-size: 0.875rem; font-weight: 600; white-space: nowrap; } .ds-coming { color: var(--attending-ink); } .ds-unclear { color: var(--invalid-ink); } .ds-pending { color: var(--pending-ink); }"
+    },
+    {
+      "name": "WhatsApp Thread",
+      "kind": "custom",
+      "refersTo": "chat-panel",
+      "description": "WhatsApp-faithful chat surface inside the guest drawer.",
+      "html": "<div class=\"ds-chat\"><div class=\"ds-out\">Hello Reem, you're invited to Misaaq Jaman. Will you be joining us?<small>20 Oct, 09:24 · Read</small></div><div class=\"ds-in\">Who is this?<small>24 Oct, 23:46</small></div></div>",
+      "css": ".ds-chat { font-family: var(--font-hanken), \"Hanken Grotesk\", system-ui, sans-serif; display: flex; flex-direction: column; gap: 10px; max-width: 400px; padding: 20px; background: var(--chat-surface, oklch(0.95 0.015 90)); } .ds-out, .ds-in { max-width: 85%; padding: 8px 12px; border-radius: 6px; font-size: 0.9375rem; line-height: 1.35; color: var(--ink); box-shadow: 0 1px 1px oklch(0.3 0.03 150 / 0.15); } .ds-out { align-self: flex-end; border-top-right-radius: 3px; background: oklch(0.94 0.06 145); } .ds-in { align-self: flex-start; border-top-left-radius: 3px; background: var(--bg); } .ds-chat small { display: block; margin-top: 4px; text-align: right; font-size: 0.75rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Family Guest Book",
+    "overview": "Nidaa is the guest list a family actually keeps: an exercise book with a blue card cover, white pages printed with pale blue rules and one red margin line, and the host's ballpoint ticks, crosses and question marks beside each name. Totals are summed at the foot of the column in pen and underlined twice. Everything the product prints (names, dates, labels, controls) is set in a warm grotesque; everything the host \"wrote\" (marks, margin notes, party sizes, totals, countdowns) is in ballpoint. The cover holds the rose script name. Nothing else is decorated.\n\nThe register is a working tool used mostly on a phone in the evening, so the page is dense where it needs to be (guest rows at 12px vertical padding, one name per line) and quiet everywhere else. Separation comes from ruled lines, not boxes: hairlines between rows, a dark rule under each heading, a double rule above a total. There are no card shells, no stat tiles, no status pills and no gradients. Depth exists only for things lifted off the page: the guest drawer, a dialog, a toast.\n\nThis world replaces an earlier generic SaaS look (bordered cards, pills, a mauve accent, Geist type) that the owner rejected as machine-made. The still-true principles carry over: clarity over decoration, status never shown by colour alone, WCAG contrast, tabular numerals, and respect for reduced motion.",
+    "keyCharacteristics": [
+      "Cover-blue shell (desktop sidebar, phone top bar and bottom tab bar) holding the rose script wordmark with its gold \"RSVP Service\" tag.",
+      "White page; 1px rule-blue hairlines between rows; one 1px red margin rule down every list.",
+      "One ballpoint blue for primary actions, every margin mark, and every hand-written number.",
+      "RSVP state = an SVG pen mark in the margin + a coloured word. Never a pill, never colour alone.",
+      "Hand-summed seat totals in Kalam with a drawn double underline.",
+      "WhatsApp-faithful chat surface inside the guest drawer.",
+      "Radii no larger than 6px; flat paper with shadows reserved for lifted layers."
+    ],
+    "rules": [
+      {
+        "name": "The One Pen Rule",
+        "body": "Every mark and every number the host \"wrote\" is `brand-600`, regardless of state. The mark's shape carries the meaning; the colour belongs to the word beside it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Rose Stays on the Cover Rule",
+        "body": "Rose and gold appear only on cover blue: the wordmark lockup and the current-tab stroke. Never on the white page, never on a button.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mark-Plus-Word Rule",
+        "body": "A reply state is never colour alone: it is a pen mark (or a blank margin for \"No reply yet\") plus its word.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Hands Rule",
+        "body": "Hanken prints, Kalam writes, Great Vibes signs. Kalam only for what a host would pen (marks, notes, counts, totals); Great Vibes only for \"Nidaa\".",
+        "section": "typography"
+      },
+      {
+        "name": "The Even Columns Rule",
+        "body": "Every count, date, phone number and total uses tabular numerals (`.tnum` / `font-variant-numeric: tabular-nums`).",
+        "section": "typography"
+      },
+      {
+        "name": "The Margin Rule",
+        "body": "Every list of people or events runs down one red margin line; marks live left of it, words right of it. A list without a margin is not on the page.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper Lies Flat Rule",
+        "body": "Nothing on the page casts a shadow. If it needs separating, rule a line.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Ruled-Not-Boxed Rule",
+        "body": "Group with rules and whitespace, never with a bordered card. The only boxed surfaces are lifted layers (drawer, dialog, toast) and the WhatsApp chat imitation.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** write every mark, total, party size and countdown in ballpoint (`brand-600`) and every reply state as mark + word in its RSVP ink.",
+      "**Do** run every list of people or events down a `.ruled-margin` with marks left of the line.",
+      "**Do** separate with rules: `line` hairlines between rows, a 1px `ink/80` rule under headings and above lists, a 2px `ink/80` rule above a hand total.",
+      "**Do** use tabular numerals for every count, date, phone number and total.",
+      "**Do** keep text contrast at 4.5:1 or better (the inks here run 5.3:1 to 17:1 on paper) and focus visible as a 2px ballpoint outline.",
+      "**Do** let marks draw themselves on status change, and honour `prefers-reduced-motion` (all animation collapses to 0.01ms).",
+      "**Do** use the house words: \"Coming\", \"Can't make it\", \"Maybe\", \"No reply yet\", \"Unclear reply\", \"Seats to set\", \"practice run\". Name real people and numbers.",
+      "**Do** keep the WhatsApp surfaces faithful to WhatsApp (chat paper, green outbound bubbles, squared tails, delivery ticks in words)."
+    ],
+    "donts": [
+      "**Don't** wrap content in bordered or shadowed cards, stat tiles or status pills.",
+      "**Don't** colour a margin mark by status; the pen is one colour.",
+      "**Don't** set UI text in Kalam or anything but \"Nidaa\" in Great Vibes.",
+      "**Don't** put rose or gold on the white page.",
+      "**Don't** round anything past 6px, or use side-stripe borders, gradient text, glassmorphism, or eyebrow labels over sections.",
+      "**Don't** cast shadows from anything that sits on the page; only drawer, dialog, toast, the primary button's pen-press and chat bubbles lift.",
+      "**Don't** show a reply state by colour alone, or use robotic copy (\"Status: PENDING\", \"Submit\")."
+    ]
+  }
+}

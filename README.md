@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nidaa
 
-## Getting Started
+Event RSVPs over WhatsApp. Organizers create an event and import a guest list. Guests get a WhatsApp
+invitation with tap-to-reply buttons. Nidaa tracks every reply and party size, chases guests who
+haven't replied, and reminds attending guests before the event.
 
-First, run the development server:
+See [PRODUCT.md](PRODUCT.md) for the product and [DESIGN.md](DESIGN.md) for design intent.
+
+## Run it
 
 ```bash
+npm install
+cp .env.example .env.local   # optional — the app runs without WhatsApp credentials
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Simulation mode.** Without WhatsApp credentials Nidaa runs in simulation mode: sends are recorded
+in each guest's timeline but never leave the server. The guest drawer has a "Simulate a reply" panel,
+which runs replies through the same code path as the real webhook.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Demo data.** The data lives in an in-memory store seeded with demo events. It resets whenever the
+server restarts.
 
-## Learn More
+## Connect WhatsApp
 
-To learn more about Next.js, take a look at the following resources:
+Follow **[docs/whatsapp-setup.md](docs/whatsapp-setup.md)**. It covers:
+- the Meta accounts you need, and the phone number;
+- a permanent access token;
+- webhooks;
+- message templates and their categories;
+- consent;
+- messaging limits and pricing;
+- error codes;
+- a production checklist.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Once credentials are set, **Settings** shows the live connection status and template approval. It
+also lets you send a test message.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Layout
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Path | What |
+|---|---|
+| `src/app/(dashboard)` | Dashboard pages: home, events, event detail/new/edit, guests, settings |
+| `src/app/actions.ts` | Server actions for every mutation |
+| `src/app/api/whatsapp/webhook` | Meta webhook (verification + inbound messages and statuses) |
+| `src/app/api/cron/reminders` | Hourly chasers and pre-event reminders |
+| `src/lib/store.ts` | Data access (in-memory; swap for Postgres here) |
+| `src/lib/rsvp.ts` | RSVP conversation engine |
+| `src/lib/whatsapp/` | Cloud API config, client, templates, webhook parsing |

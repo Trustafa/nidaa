@@ -1,37 +1,66 @@
 import type { Metadata } from "next";
-import { EventCard } from "@/components/event-card";
-import { events } from "@/lib/mock-data";
+import Link from "next/link";
+import { connection } from "next/server";
+import { EventEntry } from "@/components/event-entry";
+import { PageHeading, btnPrimary } from "@/components/ui";
+import { listEvents } from "@/lib/store";
+import { plural, todayIso } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Events · Nidaa",
 };
 
-export default function EventsPage() {
-  const sorted = [...events].sort((a, b) => a.date.localeCompare(b.date));
+export default async function EventsPage() {
+  await connection();
+  const today = todayIso();
+  const events = listEvents();
+  const upcoming = events.filter((e) => e.date >= today);
+  const past = events.filter((e) => e.date < today).reverse();
   const totalInvited = events.reduce((n, e) => n + e.invited, 0);
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 md:px-10">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-8 md:px-12 md:py-12">
+      <header className="flex flex-wrap items-end justify-between gap-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Events</h1>
-          <p className="tnum mt-1 text-sm text-ink-muted">
-            {`${events.length} events · ${totalInvited} guests invited in total.`}
+          <h1 className="text-[2rem] leading-tight font-bold tracking-[-0.025em] md:text-[2.5rem]">Your events</h1>
+          <p className="tnum mt-2 text-base text-ink-muted md:text-lg">
+            {events.length
+              ? `${plural(events.length, "event")}, ${plural(totalInvited, "guest")} on the lists.`
+              : "Nothing planned yet."}
           </p>
         </div>
-        <a
-          href="#"
-          className="rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-700"
-        >
+        <Link href="/events/new" className={btnPrimary}>
           New event
-        </a>
-      </div>
+        </Link>
+      </header>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        {sorted.map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </div>
+      {events.length === 0 && (
+        <p className="mt-10 border-t border-ink/80 py-10 text-ink-muted">
+          Create an event to start inviting guests over WhatsApp.
+        </p>
+      )}
+
+      {upcoming.length > 0 && (
+        <section aria-labelledby="upcoming-heading" className="mt-10">
+          <PageHeading id="upcoming-heading">Coming up</PageHeading>
+          <div className="ruled-margin [--margin-x:3.25rem] sm:[--margin-x:4.5rem]">
+            {upcoming.map((event) => (
+              <EventEntry key={event.id} event={event} today={today} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {past.length > 0 && (
+        <section aria-labelledby="past-heading" className="mt-14">
+          <PageHeading id="past-heading">Already happened</PageHeading>
+          <div className="ruled-margin opacity-80 [--margin-x:3.25rem] sm:[--margin-x:4.5rem]">
+            {past.map((event) => (
+              <EventEntry key={event.id} event={event} today={today} />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

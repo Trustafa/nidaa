@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Great_Vibes } from "next/font/google";
+import { Hanken_Grotesk, Kalam, Great_Vibes } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// UI face: a warm grotesque that stays legible at table sizes.
+const hanken = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// The ballpoint layer only: margin marks, notes and hand-summed totals.
+const kalam = Kalam({
+  variable: "--font-kalam",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -32,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${greatVibes.variable} h-full antialiased`}
+      className={`${hanken.variable} ${kalam.variable} ${greatVibes.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

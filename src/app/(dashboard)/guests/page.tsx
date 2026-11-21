@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { GuestExplorer } from "@/components/guest-explorer";
-import { events, guests, type RsvpStatus } from "@/lib/mock-data";
+import { listEvents, listGuests } from "@/lib/store";
+import { plural } from "@/lib/format";
+import { isWhatsAppConfigured } from "@/lib/whatsapp/config";
+import type { RsvpStatus } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Guests · Nidaa",
@@ -8,32 +12,33 @@ export const metadata: Metadata = {
 
 const validStatuses: RsvpStatus[] = ["attending", "declined", "maybe", "pending", "invalid"];
 
-export default async function GuestsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ status?: string }>;
-}) {
+export default async function GuestsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  await connection();
   const { status } = await searchParams;
-  const initialStatus = validStatuses.includes(status as RsvpStatus)
-    ? (status as RsvpStatus)
-    : "all";
-  const totalInvited = events.reduce((n, e) => n + e.invited, 0);
+  const initialStatus = validStatuses.includes(status as RsvpStatus) ? (status as RsvpStatus) : "all";
+  const events = listEvents();
+  const guests = listGuests();
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 md:px-10">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Guests</h1>
-        <p className="tnum mt-1 text-sm text-ink-muted">
-          {`Everyone you've invited, across ${events.length} events.`}
+    <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 md:px-12 md:py-12">
+      <header>
+        <h1 className="text-[2rem] leading-tight font-bold tracking-[-0.025em] md:text-[2.5rem]">Everyone you&apos;ve invited</h1>
+        <p className="tnum mt-2 text-base text-ink-muted md:text-lg">
+          {`${plural(guests.length, "invitation")} for ${plural(
+            guests.reduce((n, g) => n + g.seats, 0),
+            "person",
+            "people"
+          )}, across ${plural(events.length, "event")}.`}
         </p>
-      </div>
+      </header>
 
-      <div className="mt-6">
+      <div className="mt-10">
         <GuestExplorer
           guests={guests}
+          events={Object.fromEntries(events.map((e) => [e.id, { name: e.name }]))}
           showEvent
-          totalCount={totalInvited}
           initialStatus={initialStatus}
+          simulation={!isWhatsAppConfigured()}
         />
       </div>
     </main>

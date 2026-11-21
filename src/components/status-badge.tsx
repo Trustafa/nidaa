@@ -1,20 +1,19 @@
-import { statusLabels, type RsvpStatus } from "@/lib/mock-data";
+import { statusLabels, type RsvpStatus } from "@/lib/types";
+import { MarginMark } from "./ink";
 
-const styles: Record<RsvpStatus, { badge: string; dot: string }> = {
-  attending: { badge: "bg-attending-bg text-attending-ink", dot: "bg-attending-dot" },
-  declined: { badge: "bg-declined-bg text-declined-ink", dot: "bg-declined-dot" },
-  maybe: { badge: "bg-maybe-bg text-maybe-ink", dot: "bg-maybe-dot" },
-  pending: { badge: "bg-pending-bg text-pending-ink", dot: "bg-pending-dot" },
-  invalid: { badge: "bg-invalid-bg text-invalid-ink", dot: "bg-invalid-dot" },
+const inks: Record<RsvpStatus, string> = {
+  attending: "text-attending-ink",
+  declined: "text-declined-ink",
+  maybe: "text-maybe-ink",
+  pending: "text-pending-ink",
+  invalid: "text-invalid-ink",
 };
 
-export function StatusBadge({ status }: { status: RsvpStatus }) {
-  const s = styles[status];
+/** A status written the way a host would: a pen mark and a word, no pill */
+export function StatusBadge({ status, mark = true }: { status: RsvpStatus; mark?: boolean }) {
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium ${s.badge}`}
-    >
-      <span aria-hidden className={`size-1.5 rounded-full ${s.dot}`} />
+    <span className={`inline-flex items-center gap-1 whitespace-nowrap text-sm font-semibold ${inks[status]}`}>
+      {mark && status !== "pending" && <MarginMark status={status} className="size-4" />}
       {statusLabels[status]}
     </span>
   );

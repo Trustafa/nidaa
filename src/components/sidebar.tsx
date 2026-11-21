@@ -3,50 +3,34 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Wordmark } from "./wordmark";
-import {
-  DashboardIcon,
-  CalendarIcon,
-  GuestsIcon,
-  SettingsIcon,
-  LogoutIcon,
-  ChevronDown,
-} from "./icons";
+import { DashboardIcon, CalendarIcon, GuestsIcon, SettingsIcon, LogoutIcon } from "./icons";
 
 const nav = [
-  { label: "Dashboard", href: "/", icon: DashboardIcon },
+  { label: "Home", href: "/", icon: DashboardIcon },
   { label: "Events", href: "/events", icon: CalendarIcon },
   { label: "Guests", href: "/guests", icon: GuestsIcon },
+  { label: "Settings", href: "/settings", icon: SettingsIcon },
 ];
 
-export function Sidebar() {
+function isCurrent(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
+
+/** Desktop shell: the notebook's cover, with the open page as a white index tab */
+export function Sidebar({ organizerName, orgName }: { organizerName: string; orgName: string }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-line bg-sidebar">
-      <div className="px-6 pt-8 pb-6">
-        <Link href="/" className="block">
+    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col bg-cover text-cover-ink md:flex">
+      <div className="px-6 pt-8 pb-8">
+        <Link href="/" className="block rounded-md" aria-label="Nidaa home">
           <Wordmark />
         </Link>
       </div>
 
-      <div className="px-4">
-        <button
-          type="button"
-          className="flex w-full items-center justify-between rounded-lg border border-line bg-bg px-3 py-2 text-sm font-medium text-ink transition-colors duration-150 hover:border-line-strong"
-        >
-          <span className="flex items-center gap-2.5">
-            <span className="flex size-6 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
-              M
-            </span>
-            Mustafa
-          </span>
-          <ChevronDown className="size-3.5 text-ink-faint" />
-        </button>
-      </div>
-
-      <nav className="mt-6 flex flex-1 flex-col gap-0.5 px-4" aria-label="Main">
+      <nav className="flex flex-1 flex-col gap-1 pl-4" aria-label="Main">
         {nav.map(({ label, href, icon: Icon }) => {
-          const current = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          const current = isCurrent(pathname, href);
           return (
             <Link
               key={label}
@@ -54,33 +38,57 @@ export function Sidebar() {
               aria-current={current ? "page" : undefined}
               className={
                 current
-                  ? "flex items-center gap-3 rounded-lg bg-brand-050 px-3 py-2 text-sm font-medium text-brand-700"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors duration-150 hover:bg-bg hover:text-ink"
+                  ? "flex items-center gap-3 rounded-l-md bg-bg py-2.5 pr-4 pl-3 text-[0.9375rem] font-semibold text-ink"
+                  : "mr-4 flex items-center gap-3 rounded-md py-2.5 pr-4 pl-3 text-[0.9375rem] font-medium text-cover-ink-muted transition-colors duration-150 hover:bg-cover-deep hover:text-cover-ink"
               }
             >
-              <Icon className={current ? "size-4 text-brand-600" : "size-4 text-ink-faint"} />
+              <Icon className={current ? "size-4 text-brand-600" : "size-4"} />
               {label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="flex flex-col gap-0.5 border-t border-line px-4 py-4">
+      <div className="border-t border-cover-ink/15 px-6 py-5">
+        <p className="text-[0.9375rem] font-semibold">{organizerName}</p>
+        <p className="text-sm text-cover-ink-muted">{orgName}</p>
         <a
           href="#"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors duration-150 hover:bg-bg hover:text-ink"
+          className="mt-3 inline-flex items-center gap-2 text-sm text-cover-ink-muted transition-colors duration-150 hover:text-cover-ink"
         >
-          <SettingsIcon className="size-4 text-ink-faint" />
-          Settings
-        </a>
-        <a
-          href="#"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors duration-150 hover:bg-bg hover:text-ink"
-        >
-          <LogoutIcon className="size-4 text-ink-faint" />
+          <LogoutIcon className="size-3.5" />
           Log out
         </a>
       </div>
     </aside>
+  );
+}
+
+/** Phone shell: thumb-reach tabs along the bottom edge */
+export function MobileNav() {
+  const pathname = usePathname();
+  return (
+    <nav
+      aria-label="Main"
+      className="fixed inset-x-0 bottom-0 z-[var(--z-sticky)] grid grid-cols-4 border-t border-cover-deep bg-cover pb-[env(safe-area-inset-bottom)] md:hidden"
+    >
+      {nav.map(({ label, href, icon: Icon }) => {
+        const current = isCurrent(pathname, href);
+        return (
+          <Link
+            key={label}
+            href={href}
+            aria-current={current ? "page" : undefined}
+            className={`flex flex-col items-center gap-1 pt-2.5 pb-2 text-xs font-semibold transition-colors duration-150 ${
+              current ? "text-cover-ink" : "text-cover-ink-muted"
+            }`}
+          >
+            <Icon className="size-5" />
+            {label}
+            <span aria-hidden className={`h-0.5 w-6 rounded-full ${current ? "bg-rose" : "bg-transparent"}`} />
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "./icons";
+import { PenCircle } from "./ink";
 
 type Props = {
   /** ISO yyyy-mm-dd for "today" (passed from the server to keep render stable) */
@@ -10,66 +11,68 @@ type Props = {
   eventDates: { date: string; label: string }[];
 };
 
-const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 function iso(year: number, month: number, day: number) {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
+/** A pocket-diary month: event days ringed in pen, today underlined */
 export function MiniCalendar({ today, eventDates }: Props) {
   const [y0, m0] = today.split("-").map(Number);
   const [view, setView] = useState({ year: y0, month: m0 - 1 });
 
-  const monthName = new Date(view.year, view.month, 1).toLocaleString("en", {
+  const monthName = new Date(Date.UTC(view.year, view.month, 1)).toLocaleString("en-GB", {
     month: "long",
     year: "numeric",
+    timeZone: "UTC",
   });
 
-  const firstDay = new Date(view.year, view.month, 1);
-  // Monday-first offset
-  const lead = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
+  const lead = (new Date(Date.UTC(view.year, view.month, 1)).getUTCDay() + 6) % 7;
+  const daysInMonth = new Date(Date.UTC(view.year, view.month + 1, 0)).getUTCDate();
   const eventsByDate = new Map(eventDates.map((e) => [e.date, e.label]));
+  const monthEvents = eventDates
+    .filter((e) => e.date.startsWith(iso(view.year, view.month, 1).slice(0, 7)))
+    .sort((a, b) => a.date.localeCompare(b.date));
 
   const cells: (number | null)[] = [
     ...Array.from({ length: lead }, () => null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
 
-  const prev = () =>
-    setView(({ year, month }) =>
-      month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 }
-    );
-  const next = () =>
-    setView(({ year, month }) =>
-      month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 }
-    );
+  const shift = (delta: number) =>
+    setView(({ year, month }) => {
+      const m = month + delta;
+      return { year: year + Math.floor(m / 12), month: ((m % 12) + 12) % 12 };
+    });
 
   return (
-    <div className="rounded-xl border border-line bg-bg p-4">
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={prev}
-          aria-label="Previous month"
-          className="flex size-7 items-center justify-center rounded-md text-ink-faint transition-colors duration-150 hover:bg-surface hover:text-ink"
-        >
-          <ChevronLeft className="size-3.5" />
-        </button>
-        <span className="text-sm font-semibold">{monthName}</span>
-        <button
-          type="button"
-          onClick={next}
-          aria-label="Next month"
-          className="flex size-7 items-center justify-center rounded-md text-ink-faint transition-colors duration-150 hover:bg-surface hover:text-ink"
-        >
-          <ChevronRight className="size-3.5" />
-        </button>
+    <section aria-label="Calendar">
+      <div className="flex items-center justify-between border-b border-ink/80 pb-2">
+        <h2 className="text-lg font-bold tracking-[-0.01em]">{monthName}</h2>
+        <div className="flex gap-1">
+          <button
+            type="button"
+            onClick={() => shift(-1)}
+            aria-label="Previous month"
+            className="flex size-8 items-center justify-center rounded-md text-ink-muted transition-colors duration-150 hover:bg-surface hover:text-ink"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => shift(1)}
+            aria-label="Next month"
+            className="flex size-8 items-center justify-center rounded-md text-ink-muted transition-colors duration-150 hover:bg-surface hover:text-ink"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
       </div>
 
       <div className="mt-3 grid grid-cols-7 text-center">
-        {WEEKDAYS.map((d) => (
-          <span key={d} className="pb-1.5 text-[0.6875rem] font-medium text-ink-faint">
+        {WEEKDAYS.map((d, i) => (
+          <span key={i} aria-hidden className="pb-1 text-xs font-semibold text-ink-faint">
             {d}
           </span>
         ))}
@@ -79,29 +82,34 @@ export function MiniCalendar({ today, eventDates }: Props) {
           const isToday = date === today;
           const eventLabel = eventsByDate.get(date);
           return (
-            <span key={date} className="relative flex h-8 items-center justify-center">
+            <span key={date} className="flex h-10 items-center justify-center">
               <span
                 title={eventLabel}
-                className={`tnum flex size-7 items-center justify-center rounded-full text-xs ${
-                  isToday
-                    ? "bg-brand-600 font-semibold text-white"
-                    : eventLabel
-                      ? "bg-brand-050 font-medium text-brand-700"
-                      : "text-ink-muted"
+                className={`tnum relative flex size-9 items-center justify-center text-sm ${
+                  eventLabel ? "font-bold text-brand-700" : isToday ? "font-bold text-ink" : "text-ink-muted"
                 }`}
               >
                 {day}
+                {eventLabel && <PenCircle />}
+                {isToday && <span aria-hidden className="absolute bottom-1 h-0.5 w-4 rounded-full bg-margin" />}
               </span>
-              {eventLabel && !isToday && (
-                <span
-                  aria-hidden
-                  className="absolute bottom-0.5 size-1 rounded-full bg-brand-500"
-                />
-              )}
             </span>
           );
         })}
       </div>
-    </div>
+
+      {monthEvents.length > 0 && (
+        <ul className="mt-3 space-y-1 border-t border-line pt-3 text-sm">
+          {monthEvents.map((e) => (
+            <li key={e.date + e.label} className="flex gap-3">
+              <span className="tnum w-6 shrink-0 text-right font-hand text-base font-bold text-brand-600">
+                {Number(e.date.slice(8))}
+              </span>
+              <span className="text-ink">{e.label}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
