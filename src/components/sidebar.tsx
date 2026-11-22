@@ -51,8 +51,12 @@ export function Sidebar({ organizerName, orgName, canSignOut }: { organizerName:
       </nav>
 
       <div className="border-t border-cover-ink/15 px-6 py-5">
-        <p className="text-[0.9375rem] font-semibold">{organizerName}</p>
-        <p className="text-sm text-cover-ink-muted">{orgName}</p>
+        <p className="truncate text-[0.9375rem] font-semibold" title={organizerName}>
+          {organizerName}
+        </p>
+        <p className="truncate text-sm text-cover-ink-muted" title={orgName}>
+          {orgName}
+        </p>
         {canSignOut && (
           <form action={logoutAction}>
             <button
