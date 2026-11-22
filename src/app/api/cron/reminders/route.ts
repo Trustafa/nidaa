@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { runScheduledReminders } from "@/lib/rsvp";
+import { flush } from "@/lib/persist";
 
 /**
  * Chasers and pre-event reminders. Call hourly from a scheduler with
@@ -13,5 +14,6 @@ export async function GET(request: NextRequest) {
   if (!authorized) return new Response("Unauthorized", { status: 401 });
 
   const result = await runScheduledReminders();
+  await flush();
   return Response.json(result);
 }

@@ -5,6 +5,7 @@ import { EventEntry } from "@/components/event-entry";
 import { PageHeading, btnPrimary } from "@/components/ui";
 import { listEvents } from "@/lib/store";
 import { plural, todayIso } from "@/lib/format";
+import { requireUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Events · Nidaa",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 
 export default async function EventsPage() {
   await connection();
+  await requireUser();
   const today = todayIso();
   const events = listEvents();
   const upcoming = events.filter((e) => e.date >= today);

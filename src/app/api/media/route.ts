@@ -1,4 +1,6 @@
 import { MediaError, saveUpload } from "@/lib/media";
+import { getSessionUser } from "@/lib/auth";
+import { flush } from "@/lib/persist";
 
 /**
  * Upload an invitation photo or video. Returns the stored asset so the event
@@ -6,6 +8,7 @@ import { MediaError, saveUpload } from "@/lib/media";
  * their 1 MB body limit is smaller than a WhatsApp video.
  */
 export async function POST(request: Request) {
+  if (!(await getSessionUser())) return Response.json({ error: "Sign in first." }, { status: 401 });
   let form: FormData;
   try {
     form = await request.formData();
@@ -17,6 +20,7 @@ export async function POST(request: Request) {
 
   try {
     const asset = await saveUpload(file);
+    await flush();
     return Response.json({
       id: asset.id,
       kind: asset.kind,

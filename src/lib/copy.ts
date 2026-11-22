@@ -1,6 +1,6 @@
 import type { Event, Guest } from "./types";
 import { TEMPLATES, renderTemplateBody, type TemplateKey } from "./whatsapp/templates";
-import { fmtClock, fmtInvitationDate, plural } from "./format";
+import { fmtCardDate, fmtCardTime, plural } from "./format";
 
 /** Free-form replies, sent inside the 24h window that opens when a guest messages us */
 export const replies = {
@@ -14,6 +14,8 @@ export const replies = {
   stillComing: "Lovely, see you there!",
   declined: "Thank you for letting us know. You'll be missed!",
   maybe: "No problem. We'll check in with you again closer to the date.",
+  optedOut: (eventName: string) =>
+    `Done. You won't get any more messages from us about ${eventName}. If you'd still like to reply, send Attending, Can't make it or Maybe at any time.`,
   notUnderstood: "Sorry, I didn't catch that. Please tap one of the buttons: Attending, Can't make it, or Maybe.",
 };
 
@@ -26,17 +28,37 @@ export function seatsLabel(seats: number) {
   return seats <= 1 ? "1 person" : `up to ${seats} people`;
 }
 
+/** WhatsApp rejects parameters with line breaks, tabs or runs of spaces */
+function oneLine(text: string) {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+/** "Wednesday, 23rd Sep 2026 | 12 Rabiul Akhar (Shz Saheb will arrive at 7pm)" */
+export function cardDateLine(event: Pick<Event, "date" | "dateNote">) {
+  const note = oneLine(event.dateNote ?? "");
+  return note ? `${fmtCardDate(event.date)} | ${note}` : fmtCardDate(event.date);
+}
+
 export function templateParams(key: TemplateKey, guest: Pick<Guest, "name" | "partySize" | "seats">, event: Event) {
-  const base = [firstName(guest.name), event.name, fmtInvitationDate(event.date)];
+  const name = oneLine(guest.name);
+  const hosts = oneLine(event.hostedBy ?? "") || "the hosts";
+  const occasion = oneLine(event.name);
   switch (key) {
     case "invitation":
     case "invitation_image":
     case "invitation_video":
-      return [...base, fmtClock(event.time), event.venue, seatsLabel(guest.seats)];
+      return [name, hosts, occasion, cardDateLine(event), fmtCardTime(event.time), oneLine(event.venue), String(guest.seats)];
     case "chase":
-      return base;
+      return [name, hosts, occasion, fmtCardDate(event.date)];
     case "event_reminder":
-      return [...base, fmtClock(event.time), event.venue, plural(Math.max(guest.partySize, 1), "guest")];
+      return [
+        name,
+        occasion,
+        cardDateLine(event),
+        fmtCardTime(event.time),
+        oneLine(event.venue),
+        plural(Math.max(guest.partySize, 1), "person", "people"),
+      ];
   }
 }
 

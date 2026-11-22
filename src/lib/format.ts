@@ -31,6 +31,28 @@ export function fmtInvitationDate(isoDate: string) {
   });
 }
 
+function ordinal(n: number) {
+  const tens = n % 100;
+  if (tens >= 11 && tens <= 13) return `${n}th`;
+  return `${n}${["th", "st", "nd", "rd"][n % 10] ?? "th"}`;
+}
+
+/** "Wednesday, 23rd Sep 2026" — the date line on the invitation card */
+export function fmtCardDate(isoDate: string) {
+  const d = calendarDate(isoDate);
+  const weekday = d.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" });
+  // Fixed list: ICU's en-GB short month is "Sept", not "Sep"
+  const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()];
+  return `${weekday}, ${ordinal(d.getUTCDate())} ${month} ${d.getUTCFullYear()}`;
+}
+
+/** "19:00" → "07:00 PM" — the time line on the invitation card */
+export function fmtCardTime(hhmm: string) {
+  const [h, m] = hhmm.split(":").map(Number);
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${String(h12).padStart(2, "0")}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
+}
+
 /** Accepts a calendar date or a full ISO datetime */
 export function fmtShort(iso: string) {
   return isDateOnly(iso)

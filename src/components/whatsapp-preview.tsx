@@ -31,7 +31,7 @@ export function WhatsAppPreview({
             </div>
           )}
           <div className="px-3 py-2">
-            <p className="whitespace-pre-line text-[0.9375rem] leading-[1.35] text-ink">{text}</p>
+            <p className="whitespace-pre-wrap text-[0.9375rem] leading-[1.35] text-ink">{text}</p>
             <p className="mt-1 text-right text-[0.6875rem] text-ink-faint">now</p>
           </div>
         </div>

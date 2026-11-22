@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { EventForm } from "@/components/event-form";
 import { ChevronLeft } from "@/components/icons";
 import { todayIso } from "@/lib/format";
+import { requireUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "New event · Nidaa",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 
 export default async function NewEventPage() {
   await connection();
+  await requireUser();
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 md:px-12 md:py-12">
       <Link

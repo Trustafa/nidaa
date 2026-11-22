@@ -1,21 +1,19 @@
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
+import { getSessionUser } from "@/lib/auth";
+import { mediaFile } from "@/lib/media";
 import { Readable } from "node:stream";
 import type { NextRequest } from "next/server";
 import { getMedia } from "@/lib/store";
 
 /** Serve a stored photo or video, with byte ranges so videos can seek */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  if (!(await getSessionUser())) return new Response("Sign in first", { status: 401 });
   const { id } = await params;
   const asset = getMedia(id);
-  if (!asset) return new Response("Not found", { status: 404 });
-
-  let size: number;
-  try {
-    size = (await stat(asset.path)).size;
-  } catch {
-    return new Response("Not found", { status: 404 });
-  }
+  const file = asset && (await mediaFile(asset));
+  if (!asset || !file) return new Response("Not found", { status: 404 });
+  const size = (await stat(file)).size;
 
   const headers = {
     "Content-Type": asset.mimeType,
@@ -30,13 +28,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     if (start >= size || start > end) {
       return new Response(null, { status: 416, headers: { "Content-Range": `bytes */${size}` } });
     }
-    const stream = Readable.toWeb(createReadStream(asset.path, { start, end })) as ReadableStream;
+    const stream = Readable.toWeb(createReadStream(file, { start, end })) as ReadableStream;
     return new Response(stream, {
       status: 206,
       headers: { ...headers, "Content-Length": String(end - start + 1), "Content-Range": `bytes ${start}-${end}/${size}` },
     });
   }
 
-  const stream = Readable.toWeb(createReadStream(asset.path)) as ReadableStream;
+  const stream = Readable.toWeb(createReadStream(file)) as ReadableStream;
   return new Response(stream, { headers: { ...headers, "Content-Length": String(size) } });
 }

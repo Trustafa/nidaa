@@ -8,6 +8,7 @@ import { DeleteEventButton } from "@/components/delete-event-button";
 import { ChevronLeft } from "@/components/icons";
 import { getEventSummary } from "@/lib/store";
 import { todayIso } from "@/lib/format";
+import { requireUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Edit event · Nidaa",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 
 export default async function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
   await connection();
+  await requireUser();
   const { id } = await params;
   const event = getEventSummary(id);
   if (!event) notFound();

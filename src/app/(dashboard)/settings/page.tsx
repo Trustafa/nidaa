@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
-import { ActionButton, CopyField, OrgForm, TestMessageForm } from "@/components/settings-controls";
+import { ActionButton, CopyField, OrgForm, PasswordForm, TestMessageForm } from "@/components/settings-controls";
+import { requireUser } from "@/lib/auth";
+import { authDisabled } from "@/lib/supabase/config";
+import { logoutAction } from "@/app/auth-actions";
 import { MarginMark } from "@/components/ink";
-import { PageHeading } from "@/components/ui";
+import { PageHeading, btnSecondary } from "@/components/ui";
 import { getOrg } from "@/lib/store";
 import { sendingQuota } from "@/lib/quota";
 import { fmtWhen, plural } from "@/lib/format";
@@ -43,6 +46,7 @@ const errMsg = (r: PromiseSettledResult<unknown>) => (r.status === "rejected" ? 
 
 export default async function SettingsPage() {
   await connection();
+  const user = await requireUser();
   const org = getOrg();
   const config = getWhatsAppConfig();
   const configured = isWhatsAppConfigured(config);
@@ -138,6 +142,23 @@ export default async function SettingsPage() {
           <OrgForm org={org} />
         </div>
       </section>
+
+      {!authDisabled() && (
+        <section aria-labelledby="signin-heading" className="mt-14">
+          <PageHeading id="signin-heading">Your sign-in</PageHeading>
+          <p className="mt-3 text-[0.9375rem] text-ink-muted">
+            {`Signed in as ${user.email}. To give someone else access, add them in Supabase under Authentication → Users.`}
+          </p>
+          <div className="mt-5">
+            <PasswordForm />
+          </div>
+          <form action={logoutAction} className="mt-6">
+            <button type="submit" className={btnSecondary}>
+              Log out
+            </button>
+          </form>
+        </section>
+      )}
 
       <section aria-labelledby="wa-heading" className="mt-14">
         <PageHeading

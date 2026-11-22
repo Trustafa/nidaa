@@ -4,7 +4,7 @@
  * and the reminders cron. When WhatsApp isn't configured, sends are simulated:
  * they land in the guest's timeline marked as simulated and never leave Nidaa.
  */
-import { readFile } from "node:fs/promises";
+import { readMedia } from "./media";
 import type { DeliveryStatus, Event, Guest, MediaAsset, Message, MessageKind, RsvpChoice } from "./types";
 import {
   appendMessage,
@@ -16,6 +16,8 @@ import {
   lastOutbound,
   listEvents,
   listGuests,
+  recordWhatsAppMedia,
+  touchGuest,
   updateGuest,
 } from "./store";
 import { replies, renderTemplate, templateParams } from "./copy";
@@ -92,9 +94,10 @@ async function ensureWhatsAppMedia(asset: MediaAsset): Promise<string> {
   let pending = pendingUploads.get(asset.id);
   if (!pending) {
     pending = (async () => {
-      const bytes = await readFile(asset.path);
+      const bytes = await readMedia(asset);
       const id = await uploadMedia(new Blob([bytes], { type: asset.mimeType }), asset.mimeType, asset.fileName);
       asset.wa = { id, uploadedAt: new Date().toISOString() };
+      recordWhatsAppMedia(asset.id, asset.wa);
       return id;
     })().finally(() => pendingUploads.delete(asset.id));
     pendingUploads.set(asset.id, pending);
@@ -219,6 +222,7 @@ export async function sendInvitation(guestId: string): Promise<{ queued: true } 
   const guest = getGuest(guestId);
   const event = guest && getEvent(guest.eventId);
   if (!guest || !event) throw new Error("Guest not found");
+  if (guest.optedOutAt) throw new Error("This guest asked not to be messaged");
   if (!quotaGate()(guest.phone)) {
     queue(guest, "invitation");
     return { queued: true };
@@ -261,7 +265,7 @@ function splitByQuota(guests: Guest[], gate = quotaGate()) {
 export async function sendInvitations(eventId: string) {
   const event = getEvent(eventId);
   if (!event) throw new Error("Event not found");
-  const targets = listGuests(eventId).filter((guest) => !guest.invitedAt && !guest.queued);
+  const targets = listGuests(eventId).filter((guest) => !guest.invitedAt && !guest.queued && !guest.optedOutAt);
   const { now, later } = splitByQuota(targets);
   later.forEach((g) => queue(g, "invitation"));
   return tally(await mapLimit(now, 5, (guest) => sendInvitationNow(guest, event)), later.length);
@@ -269,7 +273,7 @@ export async function sendInvitations(eventId: string) {
 
 function chaseTargets(eventId: string) {
   return listGuests(eventId).filter(
-    (guest) => guest.invitedAt && (guest.status === "pending" || guest.status === "invalid")
+    (guest) => guest.invitedAt && !guest.optedOutAt && (guest.status === "pending" || guest.status === "invalid")
   );
 }
 
@@ -290,8 +294,15 @@ const KEYWORDS: Record<RsvpChoice, string[]> = {
   maybe: ["maybe", "not sure", "perhaps", "might"],
 };
 
+function normalizeWords(text: string) {
+  return text.toLowerCase().replace(/[’']/g, "").replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+}
+
+/** "STOP" and friends, in English and Arabic */
+const STOP_WORDS = ["stop", "unsubscribe", "opt out", "optout", "stop messages", "stop messaging me", "remove me", "توقف", "قف", "الغاء", "إلغاء", "ايقاف", "إيقاف"];
+
 function matchChoice(text: string): RsvpChoice | null {
-  const t = text.toLowerCase().replace(/[’']/g, "").replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+  const t = normalizeWords(text);
   for (const [choice, words] of Object.entries(KEYWORDS) as [RsvpChoice, string[]][]) {
     if (words.includes(t)) return choice;
   }
@@ -359,6 +370,15 @@ export async function handleInbound(msg: Inbound) {
 
   const choice = parsed?.guestId === guest.id ? parsed.choice : null;
   const pickedSize = party?.guestId === guest.id ? party.size : null;
+  if (!choice && pickedSize === null && STOP_WORDS.includes(normalizeWords(msg.text))) {
+    if (!guest.optedOutAt) {
+      updateGuest(guest.id, { optedOutAt: msg.at, queued: null, awaiting: null });
+      await sendText(guest, replies.optedOut(event.name));
+    }
+    return { handled: true, guestId: guest.id };
+  }
+  // Answering again means they're happy to hear from us
+  if (guest.optedOutAt) updateGuest(guest.id, { optedOutAt: null });
   if (choice) {
     await applyChoice(guest, event, choice, msg.at);
   } else if (pickedSize !== null || guest.awaiting === "party_size") {
@@ -399,6 +419,7 @@ export function handleStatus(update: StatusUpdate) {
     const err = update.errors?.[0];
     message.error = describeWhatsAppError(err?.code, err?.message ?? err?.title ?? "Message failed to deliver");
   }
+  touchGuest(found.guest.id);
   return true;
 }
 
@@ -427,6 +448,7 @@ export async function runScheduledReminders(now = new Date()) {
     const event = getEvent(guest.eventId);
     const stillNeeded =
       event &&
+      !guest.optedOutAt &&
       daysUntil(event.date, today) >= 0 &&
       (guest.queued!.kind === "invitation" ? !guest.invitedAt : guest.status === "pending" || guest.status === "invalid");
     if (!stillNeeded) {
@@ -446,7 +468,7 @@ export async function runScheduledReminders(now = new Date()) {
     // 2. Before-the-day reminders
     if (daysBeforeEvent > 0 && days <= daysBeforeEvent) {
       const due = listGuests(event.id).filter(
-        (guest) => guest.status === "attending" && !guest.eventReminderSentAt && gate(guest.phone)
+        (guest) => guest.status === "attending" && !guest.eventReminderSentAt && !guest.optedOutAt && gate(guest.phone)
       );
       await mapLimit(due, 5, async (guest) => {
         const m = await sendTemplate(guest, event, "event_reminder", "event_reminder");

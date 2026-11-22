@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { sendTestMessageAction, updateOrgAction, type FormState } from "@/app/actions";
+import { changePasswordAction } from "@/app/auth-actions";
 import type { Organization } from "@/lib/types";
 import { useToast } from "./toast";
 import { Field, Spinner, btnPrimary, btnSecondary, btnSecondarySm, inputBase } from "./ui";
@@ -114,6 +115,39 @@ export function TestMessageForm({ disabled }: { disabled: boolean }) {
           state.message ??
           "Uses Meta's pre-approved hello_world template. On a test number, the recipient must be on its allowed list."}
       </p>
+    </form>
+  );
+}
+
+export function PasswordForm() {
+  const [state, formAction, pending] = useActionState<FormState, FormData>(changePasswordAction, {});
+  const toast = useToast();
+  const err = state.errors ?? {};
+  useEffect(() => {
+    if (state.ok) toast(state.message ?? "Password changed.");
+  }, [state, toast]);
+
+  return (
+    <form action={formAction} className="flex max-w-xl flex-col gap-4" noValidate key={state.ok ? "done" : "editing"}>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="New password" htmlFor="new-password" error={err.password} hint="At least 10 characters.">
+          <input id="new-password" name="password" type="password" autoComplete="new-password" aria-invalid={Boolean(err.password)} className={inputBase} />
+        </Field>
+        <Field label="Type it again" htmlFor="confirm-password" error={err.confirm}>
+          <input id="confirm-password" name="confirm" type="password" autoComplete="new-password" aria-invalid={Boolean(err.confirm)} className={inputBase} />
+        </Field>
+      </div>
+      {state.message && !state.ok && (
+        <p role="alert" className="text-sm text-declined-ink">
+          {state.message}
+        </p>
+      )}
+      <div className="flex flex-wrap gap-2">
+        <button type="submit" disabled={pending} className={btnSecondary}>
+          {pending && <Spinner />}
+          Change password
+        </button>
+      </div>
     </form>
   );
 }

@@ -55,6 +55,10 @@ export type Event = {
   date: string; // yyyy-mm-dd, the event's local calendar date
   time: string; // HH:mm
   venue: string;
+  /** Who the invitation is from, e.g. "Mulla Hatim & Zainab Lokhandwala" */
+  hostedBy: string;
+  /** Shown after the date, e.g. "12 Rabiul Akhar (Shz Saheb will arrive at 7pm)" */
+  dateNote: string;
   /** Default for `Guest.seats` when a guest is added without one */
   maxPartySize: number;
   reminders: ReminderSettings;
@@ -86,6 +90,8 @@ export type Guest = {
   eventReminderSentAt: string | null;
   /** Waiting for tomorrow's sending allowance (WhatsApp's daily limit) */
   queued?: { kind: "invitation" | "chase"; since: string } | null;
+  /** The guest replied STOP: Nidaa sends them nothing more unless they answer again */
+  optedOutAt?: string | null;
   timeline: Message[];
 };
 
@@ -108,6 +114,9 @@ export type EventSummary = Event & {
   /** Invitations / reminders waiting for the next day's sending allowance */
   queuedInvitations: number;
   queuedReminders: number;
+  /** Guests who replied STOP, and so are skipped by invitations / reminders */
+  optedOutNotInvited: number;
+  optedOutUnanswered: number;
 };
 
 export type Organization = {

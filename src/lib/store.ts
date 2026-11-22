@@ -1,15 +1,19 @@
 /**
- * Data access for the dashboard. Backed by an in-memory store for now — it
- * lives on globalThis so it survives hot reloads, and resets when the server
- * restarts. Every read and write goes through this module, so moving to
- * Postgres means reimplementing these functions and nothing else.
+ * Data access for the dashboard. The working set lives in memory on
+ * globalThis (so it survives hot reloads); with DATABASE_URL set, every change
+ * is written through to Postgres (persist.ts) and the whole store is loaded
+ * from it at startup. Without DATABASE_URL it runs on sample data that resets
+ * on restart, which is handy for local practice.
  *
- * Note: in-memory state only works while one long-lived Node process serves
- * both the dashboard and the WhatsApp webhook (`next dev` / `next start`).
+ * Every write goes through this module and marks what it changed. Code that
+ * mutates an entity directly must call the matching touch*() function.
+ *
+ * Only one long-lived Node process may serve the app (`next start`).
  */
 import type { Event, EventSummary, Guest, MediaAsset, Message, Organization } from "./types";
 import { seed } from "./seed";
 import { waId } from "./phone";
+import { changedSince, loadAll, markDirty, persistenceEnabled } from "./persist";
 
 type Db = {
   org: Organization;
@@ -22,12 +26,69 @@ type Db = {
   seatsMigrated?: boolean;
 };
 
-const g = globalThis as unknown as { __nidaaDb?: Db };
+const g = globalThis as unknown as { __nidaaDb?: Db; __nidaaLoading?: Promise<void> };
+
+const DEFAULT_ORG: Organization = { name: "Nidaa", organizerName: "" };
+
+/**
+ * Load everything from Postgres into memory. Called once from
+ * instrumentation.ts before the server takes requests; safe to call again.
+ */
+export function loadStore(): Promise<void> {
+  if (g.__nidaaDb || !persistenceEnabled()) return Promise.resolve();
+  g.__nidaaLoading ??= (async () => {
+    const { rows, at } = await loadAll();
+    const of = <T,>(kind: string) => rows.filter((r) => r.kind === kind).map((r) => r.data as T);
+    g.__nidaaDb = {
+      org: of<Organization>("org")[0] ?? { ...DEFAULT_ORG },
+      events: of<Event>("event"),
+      guests: of<Guest>("guest"),
+      media: new Map(of<MediaAsset>("media").map((m) => [m.id, m])),
+      processedInbound: new Set(rows.filter((r) => r.kind === "inbound").map((r) => r.id)),
+      seatsMigrated: true,
+    };
+    console.log(`[db] loaded ${g.__nidaaDb.events.length} events, ${g.__nidaaDb.guests.length} guests`);
+    // Catch writes the previous deploy made while this one was starting up
+    for (const delay of [15_000, 45_000, 120_000]) {
+      setTimeout(() => catchUp(at).catch((e) => console.error("[db] catch-up failed", e)), delay).unref?.();
+    }
+  })().finally(() => {
+    g.__nidaaLoading = undefined;
+  });
+  return g.__nidaaLoading;
+}
+
+async function catchUp(since: string) {
+  const d = g.__nidaaDb;
+  if (!d) return;
+  const rows = await changedSince(since);
+  for (const { kind, id, data } of rows) {
+    if (kind === "org") d.org = data as Organization;
+    else if (kind === "event") replaceById(d.events, data as Event);
+    else if (kind === "guest") replaceById(d.guests, data as Guest);
+    else if (kind === "media") d.media.set(id, data as MediaAsset);
+    else if (kind === "inbound") d.processedInbound.add(id);
+  }
+  if (rows.length) console.log(`[db] caught up on ${rows.length} changes from the previous server`);
+}
+
+function replaceById<T extends { id: string }>(list: T[], item: T) {
+  const i = list.findIndex((x) => x.id === item.id);
+  if (i === -1) list.push(item);
+  else list[i] = item;
+}
 
 function db(): Db {
-  if (!g.__nidaaDb) g.__nidaaDb = { ...seed(), processedInbound: new Set(), media: new Map() };
+  if (!g.__nidaaDb) {
+    if (persistenceEnabled()) throw new Error("The database hasn't finished loading yet. Try again in a moment.");
+    g.__nidaaDb = { ...seed(), processedInbound: new Set(), media: new Map() };
+  }
   // Stores created before newer fields existed (hot reload keeps globalThis)
   g.__nidaaDb.media ??= new Map();
+  for (const event of g.__nidaaDb.events) {
+    event.hostedBy ??= "";
+    event.dateNote ??= "";
+  }
   if (!g.__nidaaDb.seatsMigrated) {
     for (const guest of g.__nidaaDb.guests) {
       guest.seats ??= Math.max(guest.partySize, g.__nidaaDb.events.find((e) => e.id === guest.eventId)?.maxPartySize ?? 1);
@@ -37,9 +98,9 @@ function db(): Db {
   return g.__nidaaDb;
 }
 
-let idSeq = Date.now();
+/** Unique across restarts and processes (ids are stored in Postgres) */
 export function newId(prefix: string) {
-  return `${prefix}${(++idSeq).toString(36)}`;
+  return `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 }
 
 /* ── Organization ─────────────────────────────────────────────────────── */
@@ -49,7 +110,9 @@ export function getOrg(): Organization {
 }
 
 export function updateOrg(patch: Partial<Organization>) {
-  Object.assign(db().org, patch);
+  const org = db().org;
+  Object.assign(org, patch);
+  markDirty("org", "org", org);
 }
 
 /* ── Events ───────────────────────────────────────────────────────────── */
@@ -76,6 +139,8 @@ export function summarize(event: Event, guests: Guest[]): EventSummary {
     failed: 0,
     queuedInvitations: 0,
     queuedReminders: 0,
+    optedOutNotInvited: 0,
+    optedOutUnanswered: 0,
   };
   for (const guest of guests) {
     s.invitedSeats += guest.seats;
@@ -89,6 +154,10 @@ export function summarize(event: Event, guests: Guest[]): EventSummary {
     if (guest.queued?.kind === "invitation") s.queuedInvitations++;
     if (guest.queued?.kind === "chase") s.queuedReminders++;
     if (lastOutbound(guest)?.delivery === "failed") s.failed++;
+    if (guest.optedOutAt) {
+      if (!guest.invitedAt) s.optedOutNotInvited++;
+      else if (guest.status === "pending" || guest.status === "invalid") s.optedOutUnanswered++;
+    }
   }
   return s;
 }
@@ -112,18 +181,24 @@ export function getEventSummary(id: string): EventSummary | undefined {
 export function createEvent(input: Omit<Event, "id" | "createdAt">): Event {
   const event: Event = { ...input, id: newId("e"), createdAt: new Date().toISOString() };
   db().events.push(event);
+  markDirty("event", event.id, event);
   return event;
 }
 
 export function updateEvent(id: string, patch: Partial<Omit<Event, "id" | "createdAt">>) {
   const event = getEvent(id);
-  if (event) Object.assign(event, patch);
+  if (event) {
+    Object.assign(event, patch);
+    markDirty("event", id, event);
+  }
   return event;
 }
 
 export function deleteEvent(id: string) {
   const d = db();
   d.events = d.events.filter((e) => e.id !== id);
+  markDirty("event", id, null);
+  for (const guest of d.guests) if (guest.eventId === id) markDirty("guest", guest.id, null);
   d.guests = d.guests.filter((guest) => guest.eventId !== id);
 }
 
@@ -166,6 +241,7 @@ export function addGuests(eventId: string, rows: { name: string; phone: string; 
       timeline: [],
     };
     db().guests.push(guest);
+    markDirty("guest", guest.id, guest);
     added.push(guest);
   }
   return { added, duplicates };
@@ -173,13 +249,23 @@ export function addGuests(eventId: string, rows: { name: string; phone: string; 
 
 export function updateGuest(id: string, patch: Partial<Omit<Guest, "id" | "eventId" | "timeline">>) {
   const guest = getGuest(id);
-  if (guest) Object.assign(guest, patch);
+  if (guest) {
+    Object.assign(guest, patch);
+    markDirty("guest", id, guest);
+  }
   return guest;
+}
+
+/** Call after changing a guest (or one of its messages) in place */
+export function touchGuest(id: string) {
+  const guest = getGuest(id);
+  if (guest) markDirty("guest", id, guest);
 }
 
 export function deleteGuest(id: string) {
   const d = db();
   d.guests = d.guests.filter((guest) => guest.id !== id);
+  markDirty("guest", id, null);
 }
 
 export function phoneTaken(eventId: string, phone: string, exceptGuestId?: string) {
@@ -190,7 +276,24 @@ export function phoneTaken(eventId: string, phone: string, exceptGuestId?: strin
 
 export function addMedia(asset: MediaAsset) {
   db().media.set(asset.id, asset);
+  markDirty("media", asset.id, asset);
   return asset;
+}
+
+/** Remember WhatsApp's media id on the asset and on every event that embeds it */
+export function recordWhatsAppMedia(assetId: string, wa: NonNullable<MediaAsset["wa"]>) {
+  const d = db();
+  const asset = d.media.get(assetId);
+  if (asset) {
+    asset.wa = wa;
+    markDirty("media", assetId, asset);
+  }
+  for (const event of d.events) {
+    if (event.media?.id === assetId) {
+      event.media.wa = wa;
+      markDirty("event", event.id, event);
+    }
+  }
 }
 
 export function getMedia(id: string): MediaAsset | undefined {
@@ -206,7 +309,11 @@ export function latestMedia(kind: MediaAsset["kind"]) {
 
 export function appendMessage(guestId: string, message: Omit<Message, "id">): Message {
   const m: Message = { ...message, id: newId("m") };
-  getGuest(guestId)?.timeline.push(m);
+  const guest = getGuest(guestId);
+  if (guest) {
+    guest.timeline.push(m);
+    markDirty("guest", guestId, guest);
+  }
   return m;
 }
 
@@ -230,6 +337,7 @@ export function claimInbound(wamid: string) {
   const seen = db().processedInbound;
   if (seen.has(wamid)) return false;
   seen.add(wamid);
+  markDirty("inbound", wamid, {});
   return true;
 }
 

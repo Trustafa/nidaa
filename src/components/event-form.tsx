@@ -32,6 +32,8 @@ export function EventForm({ event, initialMedia = null, minDate }: Props) {
     date: event?.date ?? "",
     time: event?.time ?? "19:00",
     venue: event?.venue ?? "",
+    hostedBy: event?.hostedBy ?? "",
+    dateNote: event?.dateNote ?? "",
   });
   const set = (k: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setValues((v) => ({ ...v, [k]: e.target.value }));
@@ -47,6 +49,8 @@ export function EventForm({ event, initialMedia = null, minDate }: Props) {
     date: values.date || minDate,
     time: values.time || "19:00",
     venue: values.venue || "the venue",
+    hostedBy: values.hostedBy || "the hosts",
+    dateNote: values.dateNote,
   };
 
   return (
@@ -54,7 +58,7 @@ export function EventForm({ event, initialMedia = null, minDate }: Props) {
       <form action={formAction} className="flex flex-col gap-8" noValidate>
         <fieldset className="flex flex-col gap-5">
           <legend className="mb-1 w-full border-b border-ink/80 pb-2 text-lg font-bold tracking-[-0.01em]">The basics</legend>
-          <Field label="Event name" htmlFor="name" error={err.name} hint="Guests see this exactly as written, e.g. “the wedding of Sara & Omar”.">
+          <Field label="Event name" htmlFor="name" error={err.name} hint="Guests read “…for the” and then this, e.g. “Wedding reception of Mulla Taher bhai Lokhandwala”.">
             <input
               id="name"
               name="name"
@@ -66,6 +70,20 @@ export function EventForm({ event, initialMedia = null, minDate }: Props) {
               aria-invalid={Boolean(err.name)}
               aria-describedby={err.name ? "name-error" : "name-hint"}
               className={`mt-0 ${inputBase}`}
+            />
+          </Field>
+          <Field label="Invited by" htmlFor="hostedBy" error={err.hostedBy} hint="Who the invitation is from, as it should read on the card.">
+            <input
+              id="hostedBy"
+              name="hostedBy"
+              value={values.hostedBy}
+              onChange={set("hostedBy")}
+              maxLength={120}
+              required
+              autoComplete="off"
+              placeholder="Mulla Hatim & Zainab Lokhandwala"
+              aria-invalid={Boolean(err.hostedBy)}
+              className={inputBase}
             />
           </Field>
           <div className="grid gap-5 sm:grid-cols-2">
@@ -95,6 +113,21 @@ export function EventForm({ event, initialMedia = null, minDate }: Props) {
               />
             </Field>
           </div>
+          <Field
+            label="Note after the date (optional)"
+            htmlFor="dateNote"
+            hint="Shown after the date, e.g. the Hijri date or an arrival time: “12 Rabiul Akhar (Shz Saheb will arrive at 7pm)”."
+          >
+            <input
+              id="dateNote"
+              name="dateNote"
+              value={values.dateNote}
+              onChange={set("dateNote")}
+              maxLength={120}
+              autoComplete="off"
+              className={inputBase}
+            />
+          </Field>
           <Field label="Venue" htmlFor="venue" error={err.venue}>
             <input
               id="venue"
@@ -200,7 +233,7 @@ export function EventForm({ event, initialMedia = null, minDate }: Props) {
             media={media}
             text={renderTemplate("invitation", { name: "Ayesha Khan", partySize: 0, seats: defaultSeats }, previewEvent)}
             buttons={TEMPLATES.invitation.buttons.map((b) => b.text)}
-            caption="Each guest sees their own first name. Tapping a button records their reply instantly."
+            caption="Each guest sees their own name and family size. Tapping a button records their reply instantly."
           />
         </div>
       </aside>

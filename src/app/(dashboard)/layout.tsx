@@ -5,26 +5,30 @@ import { Wordmark } from "@/components/wordmark";
 import { ToastProvider } from "@/components/toast";
 import { getOrg } from "@/lib/store";
 import { isWhatsAppConfigured } from "@/lib/whatsapp/config";
+import { requireUser } from "@/lib/auth";
+import { authDisabled } from "@/lib/supabase/config";
 
 export default async function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // Data changes on every send and webhook; never prerender the dashboard.
   await connection();
+  const user = await requireUser();
   const org = getOrg();
+  const who = org.organizerName || user.name || user.email;
   const simulation = !isWhatsAppConfigured();
 
   return (
     <ToastProvider>
       <div className="flex min-h-dvh flex-1 bg-cover md:bg-bg">
-        <Sidebar organizerName={org.organizerName} orgName={org.name} />
+        <Sidebar organizerName={who} orgName={org.name} canSignOut={!authDisabled()} />
         <div className="flex min-w-0 flex-1 flex-col bg-bg">
           {/* Phone cover bar */}
           <header className="flex items-center justify-between bg-cover px-5 pt-4 pb-3 text-cover-ink md:hidden">
             <Link href="/" aria-label="Nidaa home">
               <Wordmark compact />
             </Link>
-            <span className="text-sm font-semibold text-cover-ink-muted">{org.organizerName}</span>
+            <span className="text-sm font-semibold text-cover-ink-muted">{who}</span>
           </header>
           {simulation && (
             <p className="border-b border-line bg-maybe-bg px-5 py-2 text-[0.8125rem] leading-5 text-maybe-ink md:px-12">

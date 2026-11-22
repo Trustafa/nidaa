@@ -38,6 +38,7 @@ function lastGuestWords(g: Guest) {
 }
 
 function GuestNote({ guest }: { guest: Guest }) {
+  if (guest.optedOutAt) return <span className="text-ink-muted">Asked for no more messages</span>;
   if (lastOutboundFailed(guest)) return <span className="font-semibold text-declined-ink">Message didn&apos;t arrive</span>;
   if (guest.queued?.kind === "invitation") return <span className="text-ink-muted">Invitation queued for later</span>;
   if (guest.queued?.kind === "chase") return <span className="text-ink-muted">Reminder queued for later</span>;

@@ -32,8 +32,8 @@ export function SendActions({
   const [pending, startTransition] = useTransition();
   const toast = useToast();
 
-  const toInvite = event.notInvited - event.queuedInvitations;
-  const toRemind = event.pending + event.invalid - event.notInvited - event.queuedReminders;
+  const toInvite = event.notInvited - event.queuedInvitations - event.optedOutNotInvited;
+  const toRemind = event.pending + event.invalid - event.notInvited - event.queuedReminders - event.optedOutUnanswered;
   const count = open === "chase" ? toRemind : toInvite;
   const templateKey = open === "chase" ? "chase" : "invitation";
   const noun = open === "chase" ? "reminder" : "invitation";

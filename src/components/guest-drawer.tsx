@@ -164,10 +164,14 @@ export function GuestDrawer({ guest, event, simulation, onClose }: Props) {
                 </>
               ) : (
                 <>
-                  <button type="button" onClick={resend} disabled={pending} className={btnPrimary}>
-                    {pending && <Spinner />}
-                    {guest.invitedAt ? "Resend invitation" : "Send invitation"}
-                  </button>
+                  {guest.optedOutAt ? (
+                    <p className="text-sm text-ink-muted">Replied STOP. Nidaa won&apos;t message them unless they reply again.</p>
+                  ) : (
+                    <button type="button" onClick={resend} disabled={pending} className={btnPrimary}>
+                      {pending && <Spinner />}
+                      {guest.invitedAt ? "Resend invitation" : "Send invitation"}
+                    </button>
+                  )}
                   <button type="button" onClick={() => setEditing(true)} className={btnSecondary}>
                     Edit guest
                   </button>
@@ -206,7 +210,7 @@ function TimelineItem({ entry }: { entry: Message }) {
             )}
           </div>
         )}
-        <p className="whitespace-pre-line">{entry.text}</p>
+        <p className="whitespace-pre-wrap">{entry.text}</p>
         <p className="tnum mt-1 flex flex-wrap items-center justify-end gap-x-1.5 text-[0.75rem] text-ink-muted">
           <span>{fmtTime(entry.at)}</span>
           {outbound && entry.delivery && (

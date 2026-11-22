@@ -32,17 +32,34 @@ const rsvpButtons: TemplateDefinition["buttons"] = [
   { text: "Maybe", choice: "maybe" },
 ];
 
+/*
+ * The card format, line for line. Meta rejects a body that ends on a
+ * variable and parameters that contain line breaks, so every {{n}} is a
+ * single line and the body closes on fixed text.
+ */
 const invitation: TemplateDefinition = {
   name: "nidaa_invitation",
   // Meta classifies unsolicited event invitations as marketing (and would
   // recategorize a utility submission). See docs/whatsapp-setup.md.
   category: "MARKETING",
-  // Sent to the head of a family; {{6}} says how many people it covers
+  // Sent to the head of a family; {{7}} is how many people it covers
   body:
-    "Hello {{1}}, you're invited to {{2}} on {{3}} at {{4}}, {{5}}. " +
-    "This invitation is for {{6}}.\n\n" +
-    "Will you be joining us? Tap a button below to reply.",
-  example: ["Ayesha", "the wedding of Sara & Omar", "Saturday, 21 November 2026", "7:00 pm", "Al Habtoor Palace, Dubai", "up to 5 people"],
+    "Salaam un Jameel {{1}}\n\n" +
+    "You are cordially invited by {{2}} for the {{3}} on\n\n" +
+    "Date   : {{4}}\n" +
+    "Time   : {{5}}\n" +
+    "Venue : {{6}}\n\n" +
+    "No of Invitations : {{7}}\n\n" +
+    "Kindly tap a button below to reply.",
+  example: [
+    "M Huzefa Kapasi",
+    "Mulla Hatim & Zainab Lokhandwala",
+    "Wedding reception of Mulla Taher bhai Lokhandwala",
+    "Wednesday, 23rd Sep 2026 | 12 Rabiul Akhar (Shz Saheb will arrive at 7pm)",
+    "07:00 PM",
+    "HK Bethak Surat, 2nd floor",
+    "4",
+  ],
   buttons: rsvpButtons,
 };
 
@@ -54,9 +71,15 @@ export const TEMPLATES: Record<TemplateKey, TemplateDefinition> = {
     name: "nidaa_rsvp_reminder",
     category: "MARKETING",
     body:
-      "Hello {{1}}, a gentle reminder about {{2}} on {{3}}. " +
-      "We haven't had your reply yet. Will you be joining us?",
-    example: ["Ayesha", "the wedding of Sara & Omar", "Saturday, 21 November 2026"],
+      "Salaam un Jameel {{1}}\n\n" +
+      "A gentle reminder of the invitation by {{2}} for the {{3}} on {{4}}.\n\n" +
+      "We haven't received your reply yet. Kindly tap a button below to let us know.",
+    example: [
+      "M Huzefa Kapasi",
+      "Mulla Hatim & Zainab Lokhandwala",
+      "Wedding reception of Mulla Taher bhai Lokhandwala",
+      "Wednesday, 23rd Sep 2026",
+    ],
     buttons: rsvpButtons,
   },
   event_reminder: {
@@ -64,9 +87,20 @@ export const TEMPLATES: Record<TemplateKey, TemplateDefinition> = {
     // Details for an event the guest already accepted — a utility candidate
     category: "UTILITY",
     body:
-      "Hello {{1}}, we're looking forward to seeing you at {{2}} on {{3}} at {{4}}, {{5}}. " +
-      "We have you down for {{6}}. If your plans have changed, let us know below.",
-    example: ["Ayesha", "the wedding of Sara & Omar", "Saturday, 21 November 2026", "7:00 pm", "Al Habtoor Palace, Dubai", "2 guests"],
+      "Salaam un Jameel {{1}}\n\n" +
+      "We look forward to welcoming you at the {{2}} on\n\n" +
+      "Date   : {{3}}\n" +
+      "Time   : {{4}}\n" +
+      "Venue : {{5}}\n\n" +
+      "We have you down for {{6}}. If your plans have changed, kindly let us know below.",
+    example: [
+      "M Huzefa Kapasi",
+      "Wedding reception of Mulla Taher bhai Lokhandwala",
+      "Wednesday, 23rd Sep 2026 | 12 Rabiul Akhar (Shz Saheb will arrive at 7pm)",
+      "07:00 PM",
+      "HK Bethak Surat, 2nd floor",
+      "4 people",
+    ],
     buttons: [
       { text: "See you there", choice: "attending" },
       { text: "Can't make it", choice: "declined" },

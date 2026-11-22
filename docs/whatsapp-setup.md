@@ -221,7 +221,7 @@ Settings page shows live status.
 
 Invitations go to the head of a family and cover the household:
 - **Each guest has a size.** It's "people on this invitation": set on Add guest, from a CSV column such as "People", "Family size", "Party", "Seats" or "Pax", or from the event's usual family size.
-- **The invitation says it:** "This invitation is for up to 5 people." That's the template's `{{6}}`.
+- **The invitation says it:** "No of Invitations : 5". That's the template's `{{7}}`.
 - **"How many are coming?"** offers 1 up to that family's size, with "All 5 of us" as the last option. A reply above the size gets a polite note to contact the hosts.
 - **The dashboard shows coming against invited:** per family ("3 of 5") and per event ("126 people coming, of 343 invited across 120 families").
 - **The daily limit counts one message per head of family,** which is exactly how Meta counts it.
@@ -259,12 +259,30 @@ A guest list uploaded by an organizer is **not** opt-in by itself. What Nidaa do
 - **Attestation:** "Add guest" and "Import CSV" require the organizer to confirm that guests agreed to
   hear about the event on WhatsApp. Store this attestation with a timestamp once the database exists.
 - **Naming the sender:** the invitation names the event, so guests can recognize it.
+- **STOP:** a reply of "stop", "unsubscribe", "opt out", "توقف", "إلغاء" and similar marks the guest
+  as opted out, confirms it to them once, and drops them from queued sends, chasers, the before-the-day
+  reminder and resends. If they later reply with an answer, they're opted back in.
+- **Privacy policy:** a public page at `/privacy` (see below).
 
 **Recommended next steps** (not yet built):
-- Handle "STOP" and similar replies. Mark the guest as opted out and never message them again.
-  WhatsApp also offers a built-in marketing opt-out button on marketing templates.
 - Name the host or organizer in the invitation body, e.g. "Ayesha, Sara & Omar invite you to…".
 - Show the opt-in wording in the organizer's terms of service.
+
+### Privacy policy URL
+
+Meta won't switch your app to **Live** without a public privacy policy. Nidaa serves one at
+`/privacy`, e.g. `https://your-domain.com/privacy`.
+1. Set `NIDAA_LEGAL_NAME` and `NIDAA_PRIVACY_EMAIL`, then deploy. The page shows bracketed
+   placeholders until you do. `localhost` and temporary tunnel URLs aren't accepted.
+2. Go to [developers.facebook.com/apps](https://developers.facebook.com/apps), open your app, then
+   **App settings → Basic**.
+3. Paste the URL into **Privacy Policy URL**. Under **User data deletion**, choose **Data deletion
+   instructions URL** and paste `https://your-domain.com/privacy#delete`. Click **Save changes**.
+4. Optional: add the same link to the WhatsApp business profile (WhatsApp Manager → Phone numbers →
+   Profile → Website).
+
+The policy promises deletion within 90 days of the event and within 30 days of a request. Nothing
+does that automatically yet, so either do it by hand or change those numbers.
 
 Blocks and reports from guests lower your **quality rating**. A low rating can get templates paused
 and limit your messaging. Keep an eye on it in WhatsApp Manager.
@@ -350,6 +368,8 @@ The mapping lives in `ERROR_HINTS` in `src/lib/rsvp.ts`.
    In production, schedule it hourly (Vercel Cron, GitHub Actions, or any cron service).
 
 ## 13. Before going to production
+
+Hosting, the database and sign-in: see [deploy-railway.md](deploy-railway.md).
 
 - [ ] **Database.** The store is in memory (`src/lib/store.ts`) and resets on restart. It also can't
   work on serverless hosts, where the webhook and the dashboard may run in different instances.

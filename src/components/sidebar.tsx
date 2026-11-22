@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Wordmark } from "./wordmark";
+import { logoutAction } from "@/app/auth-actions";
 import { DashboardIcon, CalendarIcon, GuestsIcon, SettingsIcon, LogoutIcon } from "./icons";
 
 const nav = [
@@ -17,7 +18,7 @@ function isCurrent(pathname: string, href: string) {
 }
 
 /** Desktop shell: the notebook's cover, with the open page as a white index tab */
-export function Sidebar({ organizerName, orgName }: { organizerName: string; orgName: string }) {
+export function Sidebar({ organizerName, orgName, canSignOut }: { organizerName: string; orgName: string; canSignOut: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -52,13 +53,17 @@ export function Sidebar({ organizerName, orgName }: { organizerName: string; org
       <div className="border-t border-cover-ink/15 px-6 py-5">
         <p className="text-[0.9375rem] font-semibold">{organizerName}</p>
         <p className="text-sm text-cover-ink-muted">{orgName}</p>
-        <a
-          href="#"
-          className="mt-3 inline-flex items-center gap-2 text-sm text-cover-ink-muted transition-colors duration-150 hover:text-cover-ink"
-        >
-          <LogoutIcon className="size-3.5" />
-          Log out
-        </a>
+        {canSignOut && (
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="mt-3 inline-flex items-center gap-2 text-sm text-cover-ink-muted transition-colors duration-150 hover:text-cover-ink"
+            >
+              <LogoutIcon className="size-3.5" />
+              Log out
+            </button>
+          </form>
+        )}
       </div>
     </aside>
   );

@@ -14,6 +14,7 @@ import { getEventSummary, listGuests } from "@/lib/store";
 import { fmtClock, fmtInvitationDate, fmtDaysAway, fmtWhen, daysUntil, plural, todayIso } from "@/lib/format";
 import { sendingQuota } from "@/lib/quota";
 import { isWhatsAppConfigured } from "@/lib/whatsapp/config";
+import { requireUser } from "@/lib/auth";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -29,6 +30,7 @@ export default async function EventDetailPage({
   searchParams: Promise<{ guest?: string }>;
 }) {
   await connection();
+  await requireUser();
   const { id } = await params;
   const { guest: guestId } = await searchParams;
   const event = getEventSummary(id);

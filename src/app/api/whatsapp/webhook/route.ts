@@ -2,6 +2,7 @@ import { after, type NextRequest } from "next/server";
 import { getWhatsAppConfig } from "@/lib/whatsapp/config";
 import { inboundContent, parseWebhook, verifySignature } from "@/lib/whatsapp/webhook";
 import { handleInbound, handleStatus } from "@/lib/rsvp";
+import { flush } from "@/lib/persist";
 
 /**
  * Callback URL to register in Meta App Dashboard → WhatsApp → Configuration:
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
         console.error("[whatsapp] inbound handling failed", m.id, e);
       }
     }
+    await flush().catch((e) => console.error("[db] saving webhook changes failed", e));
   });
 
   return new Response("EVENT_RECEIVED", { status: 200 });

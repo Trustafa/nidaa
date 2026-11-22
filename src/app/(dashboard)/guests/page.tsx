@@ -5,6 +5,7 @@ import { listEvents, listGuests } from "@/lib/store";
 import { plural } from "@/lib/format";
 import { isWhatsAppConfigured } from "@/lib/whatsapp/config";
 import type { RsvpStatus } from "@/lib/types";
+import { requireUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Guests · Nidaa",
@@ -14,6 +15,7 @@ const validStatuses: RsvpStatus[] = ["attending", "declined", "maybe", "pending"
 
 export default async function GuestsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
   await connection();
+  await requireUser();
   const { status } = await searchParams;
   const initialStatus = validStatuses.includes(status as RsvpStatus) ? (status as RsvpStatus) : "all";
   const events = listEvents();

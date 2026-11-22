@@ -9,9 +9,11 @@ import { PageHeading, btnPrimary } from "@/components/ui";
 import { getOrg, listEvents, listGuests } from "@/lib/store";
 import { fmtAgo, fmtWhen, greeting, plural, todayIso } from "@/lib/format";
 import { sendingQuota } from "@/lib/quota";
+import { requireUser } from "@/lib/auth";
 
 export default async function Home() {
   await connection();
+  const user = await requireUser();
   const today = todayIso();
   const org = getOrg();
   const events = listEvents();
@@ -34,7 +36,7 @@ export default async function Home() {
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div>
           <h1 className="text-[2rem] leading-tight font-bold tracking-[-0.025em] md:text-[2.5rem]">
-            {`${greeting()}, ${org.organizerName}.`}
+            {(org.organizerName || user.name) ? `${greeting()}, ${org.organizerName || user.name}.` : `${greeting()}.`}
           </h1>
           <p className="tnum mt-2 max-w-[60ch] text-base text-ink-muted md:text-lg">
             {upcoming.length === 0

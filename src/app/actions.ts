@@ -2,13 +2,18 @@
 
 /**
  * Server actions for the dashboard. These are reachable by direct POST, so
- * once Auth.js is wired in each one must check the session and that the
- * event/guest belongs to the caller's organization.
+ * each one checks the session first (requireUser). There's one organization,
+ * so any signed-in user may act on any event.
+ *
+ * Changes are saved to the database before the page refreshes (saved()), so
+ * a database problem shows up as an error instead of a silent loss.
  */
-import { readFile } from "node:fs/promises";
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import * as store from "@/lib/store";
+import { requireUser } from "@/lib/auth";
+import { flush } from "@/lib/persist";
+import { readMedia } from "@/lib/media";
 import { normalizePhone } from "@/lib/phone";
 import { todayIso } from "@/lib/format";
 import { sendingQuota } from "@/lib/quota";
@@ -25,6 +30,12 @@ import { getWhatsAppConfig, isWhatsAppConfigured } from "@/lib/whatsapp/config";
 import { createTemplate, listTemplates, sendMessage, subscribeApp, uploadTemplateSample, WhatsAppError } from "@/lib/whatsapp/client";
 import { TEMPLATES, templateCreationRequest } from "@/lib/whatsapp/templates";
 import { waId } from "@/lib/phone";
+
+/** Write pending changes to the database, then re-render the page */
+async function saved() {
+  await flush();
+  refresh();
+}
 
 export type FormState = {
   ok?: boolean;
@@ -58,11 +69,14 @@ function whatsAppMessage(e: unknown) {
 /* ── Events ───────────────────────────────────────────────────────────── */
 
 export async function saveEvent(eventId: string | null, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
   const input: Omit<Event, "id" | "createdAt"> = {
     name: clean(formData.get("name"), 80),
     date: String(formData.get("date") ?? ""),
     time: String(formData.get("time") ?? ""),
     venue: clean(formData.get("venue"), 120),
+    hostedBy: clean(formData.get("hostedBy"), 120),
+    dateNote: clean(formData.get("dateNote"), 120),
     maxPartySize: Math.min(Math.max(int(formData.get("maxPartySize"), 2), 1), MAX_SEATS),
     reminders: {
       chaseEveryDays: oneOf(int(formData.get("chaseEveryDays"), 3), [0, 2, 3, 5, 7], 3),
@@ -82,6 +96,7 @@ export async function saveEvent(eventId: string | null, _prev: FormState, formDa
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.date)) errors.date = "Pick the event date.";
   else if (!eventId && input.date < todayIso()) errors.date = "The date has already passed.";
   if (!/^\d{2}:\d{2}$/.test(input.time)) errors.time = "Pick a start time.";
+  if (!input.hostedBy) errors.hostedBy = "Add who the invitation is from.";
   if (!input.venue) errors.venue = "Add the venue so guests know where to go.";
   if (mediaId && !input.media) errors.media = "That photo or video is no longer available. Upload it again.";
   if (Object.keys(errors).length) return { ok: false, errors };
@@ -92,17 +107,21 @@ export async function saveEvent(eventId: string | null, _prev: FormState, formDa
   } else {
     id = store.createEvent(input).id;
   }
+  await flush();
   redirect(`/events/${id}`);
 }
 
 export async function deleteEventAction(eventId: string) {
+  await requireUser();
   store.deleteEvent(eventId);
+  await flush();
   redirect("/events");
 }
 
 /* ── Guests ───────────────────────────────────────────────────────────── */
 
 export async function addGuestAction(eventId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
   const name = clean(formData.get("name"), 80);
   const phone = normalizePhone(String(formData.get("phone") ?? ""));
   const seats = seatsFrom(formData.get("seats"));
@@ -115,7 +134,7 @@ export async function addGuestAction(eventId: string, _prev: FormState, formData
   if (Object.keys(errors).length) return { ok: false, errors };
 
   store.addGuests(eventId, [{ name, phone: phone!, seats: seats! }]);
-  refresh();
+  await saved();
   return { ok: true, message: `${name} added to the guest list.` };
 }
 
@@ -126,6 +145,7 @@ export async function importGuestsAction(
   rows: { name: string; phone: string; seats?: string }[],
   defaultCountryCode: string
 ): Promise<ImportResult> {
+  await requireUser();
   const valid: { name: string; phone: string; seats?: number }[] = [];
   let invalid = 0;
   const cc = defaultCountryCode.replace(/\D/g, "") || undefined;
@@ -138,11 +158,12 @@ export async function importGuestsAction(
     else invalid++;
   }
   const { added, duplicates } = store.addGuests(eventId, valid);
-  refresh();
+  await saved();
   return { added: added.length, duplicates: duplicates.length, invalid };
 }
 
 export async function updateGuestAction(guestId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
   const guest = store.getGuest(guestId);
   const event = guest && store.getEvent(guest.eventId);
   if (!guest || !event) return { ok: false, message: "This guest no longer exists." };
@@ -174,13 +195,14 @@ export async function updateGuestAction(guestId: string, _prev: FormState, formD
     awaiting: statusChanged && status !== "pending" ? null : guest.awaiting,
     updatedAt: statusChanged ? new Date().toISOString() : guest.updatedAt,
   });
-  refresh();
+  await saved();
   return { ok: true, message: "Guest updated." };
 }
 
 export async function deleteGuestAction(guestId: string) {
+  await requireUser();
   store.deleteGuest(guestId);
-  refresh();
+  await saved();
 }
 
 /* ── Sending ──────────────────────────────────────────────────────────── */
@@ -196,20 +218,26 @@ export type SendResult = {
 };
 
 export async function sendInvitationsAction(eventId: string): Promise<SendResult> {
+  await requireUser();
   const result = await sendInvitations(eventId);
-  refresh();
+  await saved();
   return { ...result, nextSlotAt: sendingQuota().nextSlotAt, simulated: !isWhatsAppConfigured() };
 }
 
 export async function sendChasersAction(eventId: string): Promise<SendResult> {
+  await requireUser();
   const result = await sendChasers(eventId);
-  refresh();
+  await saved();
   return { ...result, nextSlotAt: sendingQuota().nextSlotAt, simulated: !isWhatsAppConfigured() };
 }
 
 export async function resendInvitationAction(guestId: string): Promise<{ ok: boolean; message: string }> {
+  await requireUser();
+  if (store.getGuest(guestId)?.optedOutAt) {
+    return { ok: false, message: "This guest replied STOP, so Nidaa won't message them unless they reply again." };
+  }
   const r = await sendInvitation(guestId);
-  refresh();
+  await saved();
   if (r.queued) {
     return { ok: true, message: "Today's WhatsApp limit is used up, so this invitation is queued. It goes out automatically as soon as there's room." };
   }
@@ -224,6 +252,7 @@ export async function resendInvitationAction(guestId: string): Promise<{ ok: boo
  * Only available while WhatsApp isn't connected.
  */
 export async function simulateReplyAction(guestId: string, text: string, payload?: string) {
+  await requireUser();
   if (isWhatsAppConfigured()) throw new Error("Simulation is disabled while WhatsApp is connected.");
   const guest = store.getGuest(guestId);
   if (!guest || !text.trim()) return;
@@ -234,12 +263,13 @@ export async function simulateReplyAction(guestId: string, text: string, payload
     text: text.trim().slice(0, 500),
     payload,
   });
-  refresh();
+  await saved();
 }
 
 /* ── Settings ─────────────────────────────────────────────────────────── */
 
 export async function updateOrgAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
   const name = clean(formData.get("name"), 80);
   const organizerName = clean(formData.get("organizerName"), 60);
   const errors: Record<string, string> = {};
@@ -247,12 +277,13 @@ export async function updateOrgAction(_prev: FormState, formData: FormData): Pro
   if (!organizerName) errors.organizerName = "Enter your name.";
   if (Object.keys(errors).length) return { ok: false, errors };
   store.updateOrg({ name, organizerName });
-  refresh();
+  await saved();
   return { ok: true, message: "Saved." };
 }
 
 /** Sends Meta's pre-approved `hello_world` template — proves token, number and recipient work */
 export async function sendTestMessageAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireUser();
   if (!isWhatsAppConfigured()) return { ok: false, message: "Connect WhatsApp first." };
   const phone = normalizePhone(String(formData.get("phone") ?? ""));
   if (!phone) return { ok: false, errors: { phone: "Enter a mobile number with country code." } };
@@ -270,6 +301,7 @@ export async function sendTestMessageAction(_prev: FormState, formData: FormData
 }
 
 export async function submitTemplatesAction(): Promise<{ ok: boolean; message: string }> {
+  await requireUser();
   const { businessAccountId, templateLanguage } = getWhatsAppConfig();
   if (!isWhatsAppConfigured() || !businessAccountId) {
     return { ok: false, message: "Set WHATSAPP_BUSINESS_ACCOUNT_ID and the access token first." };
@@ -288,13 +320,13 @@ export async function submitTemplatesAction(): Promise<{ ok: boolean; message: s
           waiting.push(t.header === "IMAGE" ? "photo" : "video");
           continue;
         }
-        const bytes = await readFile(sample.path);
+        const bytes = await readMedia(sample);
         handle = await uploadTemplateSample(new Blob([bytes], { type: sample.mimeType }), sample.mimeType, sample.fileName);
       }
       await createTemplate(templateCreationRequest(t, templateLanguage, handle));
       submitted++;
     }
-    refresh();
+    await saved();
     const note = waiting.length
       ? ` The ${waiting.join(" and ")} invitation ${waiting.length === 1 ? "needs" : "need"} a sample: attach a ${waiting.join(" or ")} to any event, then submit again.`
       : "";
@@ -312,9 +344,10 @@ export async function submitTemplatesAction(): Promise<{ ok: boolean; message: s
 }
 
 export async function subscribeAppAction(): Promise<{ ok: boolean; message: string }> {
+  await requireUser();
   try {
     await subscribeApp();
-    refresh();
+    await saved();
     return { ok: true, message: "Your app now receives this WhatsApp account's webhooks." };
   } catch (e) {
     return { ok: false, message: whatsAppMessage(e) };
@@ -322,8 +355,9 @@ export async function subscribeAppAction(): Promise<{ ok: boolean; message: stri
 }
 
 export async function runRemindersAction(): Promise<{ ok: boolean; message: string }> {
+  await requireUser();
   const { chased, reminded, dequeued, stillQueued } = await runScheduledReminders();
-  refresh();
+  await saved();
   const parts = [
     dequeued && `${dequeued} queued message${dequeued === 1 ? "" : "s"}`,
     chased && `${chased} reminder${chased === 1 ? "" : "s"} to guests who haven't replied`,
